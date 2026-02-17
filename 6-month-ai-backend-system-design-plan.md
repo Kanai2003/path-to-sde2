@@ -153,6 +153,8 @@
 
 🔗 https://github.com/donnemartin/system-design-primer
 
+🔗 https://refactoring.guru/design-patterns
+
 ---
 
 ## Week 10 – Scalability Patterns
