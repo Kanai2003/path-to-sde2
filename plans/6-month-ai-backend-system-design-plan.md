@@ -11,8 +11,8 @@
 
 ### Learn
 
-- REST maturity
-- API versioning
+- [x] REST maturity
+- [x] API versioning
 - Idempotency
 - Pagination
 
