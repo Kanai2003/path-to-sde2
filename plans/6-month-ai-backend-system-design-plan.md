@@ -13,7 +13,7 @@
 
 - [x] REST maturity
 - [x] API versioning
-- Idempotency
+- [x] Idempotency
 - Pagination
 
 🔗 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design  
