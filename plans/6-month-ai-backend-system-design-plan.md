@@ -14,7 +14,7 @@
 - [x] REST maturity
 - [x] API versioning
 - [x] Idempotency
-- Pagination
+- [x] Pagination
 
 🔗 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design  
 🔗 https://cloud.google.com/apis/design
