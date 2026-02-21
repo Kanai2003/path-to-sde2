@@ -1,0 +1,24 @@
+# Virtual environments
+**/.venv/
+**/venv/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/
+
+# IDE / Editor
+**/.vscode/
+**/.idea/
+
+# Type checking / Testing
+**/.mypy_cache/
+**/.pytest_cache/
+**/.coverage
+
+# Environment
+**/.env
+
+# OS
+.DS_Store
+
