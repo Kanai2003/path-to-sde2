@@ -1,0 +1,58 @@
+[project]
+name = "url-shortener"
+version = "0.1.0"
+description = "Modular FastAPI URL Shortener"
+authors = [{ name = "Kanai" }]
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    # DB
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.2.0",
+    "alembic>=1.13.0",
+    # Config
+    "pydantic-settings>=2.4.0",
+    # Utils
+    "python-dotenv>=1.0.1",
+    "pydantic>=2.12.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "httpx>=0.27.0",
+
+    "black>=24.8.0",
+    "ruff>=0.6.0",
+    "isort>=5.13.0",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+select = ["E", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
