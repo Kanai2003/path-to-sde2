@@ -4,6 +4,7 @@ from app.repositories.url_repository import url_repository
 from app.utils.shortener import generate_short_code
 from app.models.url import URL
 from app.core.exceptions import ShortCodeGenerationError
+from app.utils.logger import logger
 
 
 class URLShorteningService:
@@ -46,6 +47,7 @@ class URLShorteningService:
             code = generate_short_code(original_url, salt=attempt)
             if not self.repo.exists_by_code(self.db, code):
                 return code
+        logger.error(f"Short Code generation failed for URL: {original_url} after {max_attempts} attempts")
         raise ShortCodeGenerationError(
             f"Failed to generate unique code after {max_attempts} attempts"
         )
