@@ -10,9 +10,10 @@ class URL(Base):
     __tablename__ = "urls"
 
     short_code: Mapped[str] = mapped_column(
-        String(10), primary_key=True
+        String(10), primary_key=True, index=True
     )
-    original_url: Mapped[str] = mapped_column(nullable=False, index=True)
+    original_url: Mapped[str] = mapped_column(nullable=False)
+    
     fetch_count: Mapped[int] = mapped_column(
         BigInteger, default=0, nullable=False
     )

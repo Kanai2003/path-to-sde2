@@ -1,11 +1,22 @@
 from fastapi import FastAPI
 from app.api.v1.router import api_router
 from app.api.v1.endpoints.url_redirect import router as redirect_router
+from app.core.config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="URL Shortener", 
     description="URL shortening service", 
     version="1.0.0"
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=settings.CORS_ALLOW_METHODS,
+    allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
 @app.get("/")

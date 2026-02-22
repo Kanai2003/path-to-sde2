@@ -11,5 +11,11 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    CORS_ORIGINS: list[str] = [
+        "http://localhost:*",
+    ]
+    CORS_ALLOW_CREDENTIALS: bool = True
+    CORS_ALLOW_METHODS: list[str] = ["*"]
+    CORS_ALLOW_HEADERS: list[str] = ["*"]
 
 settings = Settings()
