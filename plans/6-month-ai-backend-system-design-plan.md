@@ -32,10 +32,10 @@
 
 ### Learn
 
-- Indexing
-- Transactions
-- Isolation levels
-- Query planning
+- [x] Indexing
+- [x] Transactions
+- [x] Isolation levels
+- [x] Query planning
 
 🔗 https://www.youtube.com/playlist?list=PLSE8ODhjZXjYDBpQnSymaectKjxCy6BYq
 
