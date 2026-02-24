@@ -43,7 +43,8 @@ EXPLAIN ANALYZE SELECT * FROM URLS WHERE short_code = 'E10E0Z';
 ```
 
 What to look for in the output:
-![alt text](<Screenshot from 2026-02-24 22-17-40.png>)
+
+![alt text](image.png)
 
 - **Seq Scan**: ⚠️ Warning! Your query is not using an index. It will get slower as your GitCash user base grows.
 
