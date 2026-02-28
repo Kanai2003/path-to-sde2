@@ -52,7 +52,7 @@
 ### Learn
 
 - [x] Cache aside
-- Write through
+- [x] Write through
 - Redis data structures
 
 🔗 https://redis.io/docs/latest/develop/get-started/
