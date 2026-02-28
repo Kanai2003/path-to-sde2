@@ -51,7 +51,7 @@
 
 ### Learn
 
-- Cache aside
+- [x] Cache aside
 - Write through
 - Redis data structures
 
