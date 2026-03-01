@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session
 from app.repositories.url_repository import url_repository
 from app.core.exceptions import URLNotFoundError
-from app.core.cache import get_cached_url, cache_url
+from projects.url_shortener.app.core.cache.url_cache import url_cache
 
 
 class URLRedirectionService:
@@ -26,7 +26,7 @@ class URLRedirectionService:
             URLNotFoundError: If short code not found
         """
         # check cache first for faster retrieval
-        cached_url = get_cached_url(short_code)
+        cached_url = url_cache.get_cached_url(short_code)
         if cached_url:
             return cached_url
         
@@ -37,7 +37,7 @@ class URLRedirectionService:
             raise URLNotFoundError(f"Short code '{short_code}' not found")
 
         # cache the result for future requests
-        cache_url(short_code, url_entity.original_url)
+        url_cache.cache_url(short_code, url_entity.original_url)
         
         # Increment fetch count (will optimize with Redis later)
         self.repo.increment_fetch_count(self.db, short_code)

@@ -5,7 +5,7 @@ from app.utils.shortener import generate_short_code
 from app.models.url import URL
 from app.core.exceptions import ShortCodeGenerationError
 from app.utils.logger import logger
-from app.core.cache import cache_url
+from projects.url_shortener.app.core.cache.url_cache import url_cache
 
 
 class URLShorteningService:
@@ -44,7 +44,7 @@ class URLShorteningService:
         )
         
         # cache the mapping for faster future lookups
-        cache_url(short_code, original_url)
+        url_cache.cache_url(short_code, original_url)
         
         return created_url
         
