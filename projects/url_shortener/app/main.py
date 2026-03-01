@@ -1,4 +1,6 @@
+from pathlib import Path
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from app.api.v1.router import api_router
 from app.api.v1.endpoints.url_redirect import router as redirect_router
 from app.core.config import settings
@@ -22,9 +24,15 @@ app.add_middleware(
 # Setup rate limiter (conditionally enabled based on settings)
 setup_rate_limiter(app)
 
-@app.get("/")
+# Load HTML template
+TEMPLATES_DIR = Path(__file__).parent / "templates"
+
+
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"message": "Welcome to the URL Shortener API!"}
+    """Serve the URL shortener homepage."""
+    html_content = (TEMPLATES_DIR / "index.html").read_text()
+    return HTMLResponse(content=html_content)
 
 
 # Versioned API routes
