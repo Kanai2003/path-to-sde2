@@ -5,6 +5,7 @@ from app.utils.shortener import generate_short_code
 from app.models.url import URL
 from app.core.exceptions import ShortCodeGenerationError
 from app.utils.logger import logger
+from app.core.cache import cache_url
 
 
 class URLShorteningService:
@@ -35,11 +36,18 @@ class URLShorteningService:
         # Generate unique short code with collision handling
         short_code = self._generate_unique_code(original_url)
 
-        return self.repo.create(
+        # create URL record in database
+        created_url =  self.repo.create(
             self.db,
             original_url=original_url,
             short_code=short_code
         )
+        
+        # cache the mapping for faster future lookups
+        cache_url(short_code, original_url)
+        
+        return created_url
+        
 
     def _generate_unique_code(self, original_url: str, max_attempts: int = 5) -> str:
         """Generate a unique short code, handling collisions."""
