@@ -12,7 +12,10 @@ class URL(Base):
     short_code: Mapped[str] = mapped_column(
         String(10), primary_key=True
     )
-    original_url: Mapped[str] = mapped_column(nullable=False, index=True)
+    original_url: Mapped[str] = mapped_column(
+        nullable=False
+        # , index=True
+    )
     
     fetch_count: Mapped[int] = mapped_column(
         BigInteger, default=0, nullable=False

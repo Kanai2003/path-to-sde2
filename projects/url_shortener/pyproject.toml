@@ -17,6 +17,9 @@ dependencies = [
     # Utils
     "python-dotenv>=1.0.1",
     "pydantic>=2.12.5",
+    "redis>=7.2.1",
+    # Rate Limiting
+    "slowapi>=0.1.9",
 ]
 
 [project.optional-dependencies]

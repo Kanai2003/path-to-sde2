@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.api.v1.router import api_router
 from app.api.v1.endpoints.url_redirect import router as redirect_router
 from app.core.config import settings
+from app.core.rate_limiter import setup_rate_limiter
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -17,6 +18,9 @@ app.add_middleware(
     allow_methods=settings.CORS_ALLOW_METHODS,
     allow_headers=settings.CORS_ALLOW_HEADERS,
 )
+
+# Setup rate limiter (conditionally enabled based on settings)
+setup_rate_limiter(app)
 
 @app.get("/")
 def read_root():
