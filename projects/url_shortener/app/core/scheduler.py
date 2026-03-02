@@ -20,10 +20,10 @@ class AnalyticsScheduler:
         if self._is_started:
             return
 
-        # Add analytics sync job - runs every 3 minutes
+        # Add analytics sync job - runs every 5 minutes
         self.scheduler.add_job(
             self._sync_analytics_job,
-            trigger=IntervalTrigger(minutes=3),
+            trigger=IntervalTrigger(minutes=5),
             id="analytics_sync",
             name="Analytics Sync Job",
             max_instances=1,  # Only one instance at a time
@@ -32,7 +32,7 @@ class AnalyticsScheduler:
 
         self.scheduler.start()
         self._is_started = True
-        logger.info("Analytics scheduler started - sync every 3 minutes")
+        logger.info("Analytics scheduler started - sync every 5 minutes")
 
     def stop(self) -> None:
         """Stop the analytics scheduler."""

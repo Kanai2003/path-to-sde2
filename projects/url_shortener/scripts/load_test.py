@@ -118,6 +118,7 @@ def make_request(
     data: Optional[dict] = None,
     headers: Optional[dict] = None,
     timeout: float = 10.0,
+    follow_redirects: bool = True,
 ) -> RequestResult:
     """Make a single HTTP request."""
     start_time = time.perf_counter()
@@ -133,7 +134,17 @@ def make_request(
             url, data=body, headers=req_headers, method=method
         )
 
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        # Create opener that doesn't follow redirects if follow_redirects is False
+        if not follow_redirects:
+            class NoRedirect(urllib.request.HTTPRedirectHandler):
+                def redirect_request(self, req, fp, code, msg, headers, newurl):
+                    raise urllib.error.HTTPError(req.full_url, code, msg, headers, fp)
+            opener = urllib.request.build_opener(NoRedirect)
+            response = opener.open(request, timeout=timeout)
+        else:
+            response = urllib.request.urlopen(request, timeout=timeout)
+
+        with response:
             response_time = (time.perf_counter() - start_time) * 1000
             return RequestResult(
                 success=True, status_code=response.status, response_time=response_time
@@ -315,7 +326,7 @@ def main():
         print("=" * 50)
 
         def redirect_request():
-            return make_request(f"{base_url}/{created_short_code}")
+            return make_request(f"{base_url}/{created_short_code}", follow_redirects=False)
 
         results = run_load_test(
             test_name=f"GET /{created_short_code} (Redirect)",
