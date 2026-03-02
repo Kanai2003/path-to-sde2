@@ -1,8 +1,11 @@
 """Service for URL redirection operations."""
+
 from sqlalchemy.orm import Session
-from app.repositories.url_repository import url_repository
+
+from app.core.cache.url_cache import url_cache
 from app.core.exceptions import URLNotFoundError
-from projects.url_shortener.app.core.cache.url_cache import url_cache
+from app.repositories.url_repository import url_repository
+from app.services.analytics_service import get_analytics_service
 
 
 class URLRedirectionService:
@@ -11,6 +14,7 @@ class URLRedirectionService:
     def __init__(self, db: Session):
         self.db = db
         self.repo = url_repository
+        self.analytics = get_analytics_service(db)
 
     def get_original_url(self, short_code: str) -> str:
         """
@@ -28,8 +32,10 @@ class URLRedirectionService:
         # check cache first for faster retrieval
         cached_url = url_cache.get_cached_url(short_code)
         if cached_url:
+            # Record analytics for cached hits too
+            self.analytics.record_click(short_code)
             return cached_url
-        
+
         # fallback to database lookup if not in cache
         url_entity = self.repo.get_by_code(self.db, short_code)
 
@@ -38,9 +44,9 @@ class URLRedirectionService:
 
         # cache the result for future requests
         url_cache.cache_url(short_code, url_entity.original_url)
-        
-        # Increment fetch count (will optimize with Redis later)
-        self.repo.increment_fetch_count(self.db, short_code)
+
+        # Record click in Redis analytics (replaces DB increment)
+        self.analytics.record_click(short_code)
 
         return url_entity.original_url
 

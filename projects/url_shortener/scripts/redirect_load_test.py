@@ -17,91 +17,96 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 # All short codes from the database
-SHORT_CODES = [
-    "uAo8pb", "XyQeTZ", "doJW0b", "GKW3d2", "x3Aiws", "8fIQSq", "m62G1T", "d2SkRT",
-    "qR2v8o", "MptJEX", "x78Vsl", "w11Gmz", "yK1Lt4", "NgKEgz", "rYbLaK", "XXbmtb",
-    "ZpnVbP", "c8xY0U", "0KBKwh", "geUu0D", "yQGlXz", "N3j7rF", "UwpBV9", "PCtME5",
-    "LV742f", "WEA41Z", "Jw62kv", "Q9NKX0", "qZWpzG", "GjQRQi", "GWqup5", "axlwam",
-    "aT2Luo", "beNHEJ", "hpF5Lh", "KGQP0Z", "ZO70HI", "We3yoe", "m7R7RK", "wEqXF3",
-    "WOELwZ", "EAxla6", "2lC9A0", "MG0rba", "R7jYt2", "5Mfcfy", "ri1Zjm", "gxrXRm",
-    "aE9OzO", "w3AESB", "KrqnKP", "erG4A2", "BIiYPw", "eSWm8P", "QYuIvb", "1nsYna",
-    "k0GbCP", "qk1CYs", "rKWE2M", "ri5LSf", "uPMK1a", "4AOwQ9", "2FTNul", "VoCwUO",
-    "ChF563", "WP879E", "oxwoFn", "ayY3fO", "0zhXq7", "dgsI2N", "SBzTLf", "MzOehq",
-    "gKMNjj", "xvizYS", "0RWN1G", "Qz23Mb", "oolpbq", "o330nW", "rDqTaV", "R9gsZG",
-    "vurI22", "2CTqy9", "Vp2oDV", "OxDmht", "8wtkoX", "pbOOq8", "piy4E8", "PQnoyR",
-    "YnQfid", "ul2lo7", "VVKXTB", "b2DOaS", "XWUxAZ", "hfu4gG", "axo3wO", "DppkIC",
-    "7vloFR", "VOLO6i", "sI1nTR", "cNRE3W", "W9uMPO", "YO20pl", "7dbxkd", "GUKht8",
-    "l5QcVm", "YFEBXe", "dgDbQM", "JsSByR", "xOik0o", "7KOkzy", "LCmhFd", "Iepu27",
-    "nmDhZR", "77Nr6K", "rQh2lf", "VnlTF7", "n7GxZz", "t4eRTK", "wxKfUB", "ecyN2B",
-    "xL5Pza", "rmIX17", "2HaXaG", "2G9Um5", "DGDUxQ", "XxyUrK", "klpnIy", "U8t5k3",
-    "oZ4QX8", "zg7DuP", "CEbRqi", "Xwy6jh", "yWcsSl", "pXRU7m", "Njeshx", "DMxGYU",
-    "gHaKaz", "Wf40G0", "2aoWQO", "ydM2If", "UvEZMe", "QNcybE", "RGbWgD", "6frtcu",
-    "GODQpM", "k8nfRN", "f96H7n", "WwWLQI", "zIO0fP", "5muzHN", "7pUJMR", "dm0boc",
-    "BvVe1g", "oNrYn9", "ZqSPDn", "yDEJFg", "7GfBgl", "fyTvHG", "MxY08y", "eYd784",
-    "DitQlm", "D1HKwb", "WhitN7", "odTRsR", "OrUHOf", "7sH5yf", "JkrO3d", "8l8e69",
-    "UIuM9K", "rRqMxC", "Hq3j3Q", "sySWc0", "zJoKFI", "Dj4oIY", "M7rUDj", "FjPk8u",
-    "Icvr5d", "Q7hm0E", "5d9szE", "x7hAZM", "VNhKDv", "tUUwIZ", "XxldYy", "a4y0Vs",
-    "nARf9F", "0bgFYN", "0UJYor", "MypdfX", "rjy4vv", "3CZi2g", "O18bMQ", "nOb6Pp",
-    "3zHcJO", "FWGaFk", "MHaxVh", "JrfmcP", "zyPgKg", "Ed3VwQ", "mQmNRo", "dFzRJi",
-    "YPvl1X", "NrF9p1", "RVFoBm", "ekdkD7", "tXgROF", "pgo6A0", "1pVrNX", "z3y4KN",
-    "cHErJP", "YJRamz", "x8cekf", "iFpBgZ", "ZD3ESn", "OwToCz", "lXEpoB", "0G2DJJ",
-    "vn6BzU", "N6Gvxw", "SUVlcd", "m6Ueux", "FwAzJK", "mraBZq", "4BxcXc", "27StLP",
-    "tv3My5", "owday3", "JC6pB6", "5QR7xE", "S46Ekl", "Cqq8Zs", "bRzvnp", "wj911E",
-    "U77LW1", "Wz5AsW", "P9EAXy", "YJqGVw", "3e8KlA", "582nBx", "XE8qoB", "bm6bsD",
-    "T0gn6Q", "tOhPhd", "BiCwZR", "nSQfAv", "4CKRZr", "cQSN4M", "Ud27sM", "PSSSKY",
-    "MDiJZm", "NewAwQ", "u20Uyj", "CAlI6l", "Q6z6Zn", "LtDRDp", "qc8cLx", "CmU0xU",
-    "jITrRr", "M0mdtk", "1fMp4t", "Ixz4Zl", "gR5Y5f", "zsIBBk", "TP6lfA", "3lnF4I",
-    "kKeEiS", "fXJvHa", "Zudutt", "G11DAN", "aWPknI", "xqMtTJ", "7VLsXD", "JR7fnK",
-    "ftbTqV", "S9UIvl", "v1snjE", "Ut1oL1", "TcpBK9", "h0m607", "jn8LGP", "3COQKz",
-    "VRnBip", "yJKUBa", "TI5hsq", "UctByP", "DgyXX4", "eLkU21", "IMoWjK", "tLM9Ww",
-    "SqKyrC", "peCVVb", "uqXEnE", "52r9lQ", "Cc5xkZ", "EzNeKC", "ClyQFX", "IykQin",
-    "l8TbwV", "ldk14b", "1qKvb9", "YufQrp", "B2IXeI", "j4sIMN", "CKw2HT", "dRWQY7",
-    "GsXrNY", "0uoTs5", "HSU3RM", "REYrH6", "uE4iYG", "gIvjRi", "7BLxqg", "D82Slf",
-    "U9RFX4", "bwKQND", "kenkrd", "7yi8UI", "8XMHUL", "akQuxk", "qO7u8O", "jhZJfC",
-    "bdqDk6", "T468Yo", "ctW1dK", "WkSpjp", "OSFihI", "P0M1l2", "1BUgVy", "IvT8EG",
-    "zGT6hX", "qtyt50", "2ImUV2", "XKuKx8", "3F7qSD", "MMZLV9", "reCGHx", "RvNngF",
-    "hIr3BL", "kf5vyZ", "uo5JMl", "VnITv7", "0H2WuH", "JeUyz5", "QAoXJw", "CwCysK",
-    "yuYrL6", "PV9Ql1", "gkyAtc", "qxnJTl", "vcHI3P", "hhTLzL", "6nks6D", "dVCdKi",
-    "kXsy6S", "br41hT", "QkVSai", "bvYDQK", "kWPQ4g", "Y9li5c", "J7dpy3", "mrq9e3",
-    "tbZiIr", "SA0Dpu", "o2dfXc", "47TIWE", "ql1Pbn", "4H5vX3", "GFY4ZM", "YwtPUK",
-    "GnB0Dh", "ibi82J", "lFBkrH", "WZAzft", "76FG2T", "YeyIP5", "JgZxBW", "zAlevj",
-    "JhUrjw", "FAmy4j", "OPDiwp", "7goDBg", "zhePFp", "6Q4Kg0", "zv6Ben", "4S11Xq",
-    "Vb8zLW", "EPoBYI", "G52xoY", "hzlwC2", "VY9cy5", "6x8edR", "ebjyPd", "yPmi7o",
-    "y0k6bf", "TDXkHe", "aUzzP6", "CI7Aid", "5rDpqi", "qvc089", "bvL7TG", "st4ska",
-    "dfSujE", "zPAFME", "VKkfJS", "QnynhS", "mRwmbZ", "lxe4YU", "fk6pZX", "WT6bkP",
-    "cDhZeX", "1bl4vm", "Rmrdrw", "nibtWy", "N7FVNJ", "WXGHde", "ZHU4R6", "Wpngnm",
-    "NiBCVF", "gNYevY", "lCQAlS", "FZFpzk", "69bJos", "cuaYfx", "5DsFj7", "rl5jrd",
-    "sN1tvT", "z5xHRY", "2QkE47", "EX1mE3", "XLt703", "m4GdDs", "ljBJus", "sQqV6Z",
-    "GpVNqK", "t9KaPq", "dpEj39", "hmBQ7k", "HmJwPU", "1xe8Tf", "hdy8ja", "Tm8SwS",
-    "YmLOs0", "rqc2te", "unESI3", "TwR9LM", "nW1O2I", "7KJN8Q", "iDKnGj", "cA085M",
-    "vOSU2d", "LWSZeP", "fdXglx", "Vaboe9", "j9hYfl", "ONGKMN", "HvMebO", "JeV3M7",
-    "0XyFqY", "eXQ5Qp", "Zhj2vN", "ydcXk6", "5ziCRa", "6sVI7g", "VONird", "r5bQX1",
-    "mIOhS2", "PUizVS", "PDCpIS", "3I7HX8", "RVKfc7", "UeiWg1", "F510gv", "5fLWii",
-    "L6d3PV", "oFfURN", "hKs5qp", "XZ7dKg", "pbeaDa", "tk0nGI", "R5rFdm", "xwGXPj",
-    "CRJYAF", "PUXMQe", "Qw5CF3", "59y2g7", "sIMmLE", "aYBEpD", "SC9Xb1", "imMn3S",
-    "fFOeNo", "fqcMDg", "l1DcLa", "8TIx85", "l12ftY", "szG5u6", "zewmRo", "WBKwER",
-    "EOr6zn", "6ILxP2", "7Wo4eT", "SOXzXG", "ecc2gR", "E10EQZ", "k3EUVC"
-]
 
+SHORT_CODES = [
+    "bYsawo", "SudFGs", "uCYFsM", "0kDSmt", "vu0efz", "zzkPKA", "tR7Vdc", "QHCwaJ",
+    "NAJxo2", "cZ0xdj", "JoTuPk", "IbCZ49", "raQ1al", "tqRaMy", "raWftV", "2NJswf",
+    "bLgpSQ", "rEdvNN", "PGSUTX", "Z10Wbk", "XYJNqG", "Va1lHf", "aeKbU1", "hnVyPb",
+    "cabRmW", "3lPIRm", "8mbi8g", "e9WDmk", "2eQSNb", "k8RzA4", "2VyjZF", "zgq0kY",
+    "pR6mWZ", "qTgiK8", "7jlkev", "0Lx8XA", "yRODCi", "Vd3706", "FMdyjq", "BGCrVD",
+    "yJq9lf", "bOTp9G", "pq6KPK", "bYk7eZ", "65GuMz", "nSfDZv", "tdW5mf", "3I84E4",
+    "KweGAv", "l9uNea", "45LSkx", "Cz8VTb", "tDSFrI", "JQ7vPh", "PbXgnd", "lEbtMj",
+    "BOCBcL", "4A0VC5", "p8P3UY", "UXVOVv", "SD4ReO", "4XMnR5", "hnC8XO", "zyzdYp",
+    "ajbCEp", "XmXG6Z", "skcmVk", "QhiING", "zBoVow", "NUvA0o", "O8VtPP", "OVwn9W",
+    "NdRe6W", "JP5Duj", "j1NGAR", "UgBYqm", "FNEfwG", "atb13Z", "YtDzJf", "X3idKW",
+    "EvTxSn", "55HIEu", "EkT17R", "8N70si", "KB99qe", "Cv7e1T", "O8YnB5", "XzlMIU",
+    "Qlnbu9", "z47LOt", "7bfybY", "jKRrbN", "d5eZbd", "sGr6Ox", "cIFj2w", "ijWwGv",
+    "s4NEXn", "K3PL8L", "x9OJZO", "aTxsK0", "gs8XGy", "SgHjEb", "B0Xfk7", "kyhS8X",
+    "610qPG", "bKc7Nx", "uk387v", "2wYvmx", "k3EUVC", "VAVdZc", "QFZg3D", "WWnm39",
+    "EIXQBN", "U1WhHz", "KC1GPy", "LUODQQ", "hVeK3k", "3ZqMTu", "PpDyxz", "GoxezY",
+    "M6rVn5", "6ERcJF", "cpnnQs", "VyKsCR", "Pm76fY", "qzaF7A", "PA6TlG", "WPIHZ0",
+    "Mi7BbD", "6Ha1BF", "GiIzyp", "5JzzoU", "RqJYHw", "xQffNn", "MfnZUd", "Of22iR",
+    "6xehOY", "a66owd", "h9u7ui", "SfY8ub", "qA2o9B", "XAC7rz", "dk0KxV", "6DrtAc",
+    "memOWC", "G78NFF", "58lVKd", "eHRK3h", "jlTPxu", "1SEanD", "df1h48", "skQwHV",
+    "ZeJMYU", "JERaDz", "gWWw7w", "6ToZpz", "7xQAoG", "juymeD", "QtfcM7", "NgkpI6",
+    "1Wcfxj", "CIgeet", "JvTnjj", "D5wsm3", "xPghfZ", "C6fVFR", "JXBS8M", "xBiEJm",
+    "TxaoZS", "JayWGA", "ixVEXw", "ovsn6E", "F25x4B", "FgRw5H", "cgHdMg", "sD2wVc",
+    "xmuEP5", "MlwwIs", "ic9Yyg", "qPATcB", "DNkDYS", "1wBa6W", "N4akJv", "RI3jdZ",
+    "FZPpp2", "Lm5hfh", "n7U6D6", "ZOSz78", "e7iYFD", "SNTxmY", "OXnDcd", "bv0baQ",
+    "rfJLpX", "6nslKF", "sTomUM", "W8gInV", "6mGQix", "anLvUB", "HUip0c", "Eat6Ak",
+    "L7Qn8V", "DsXB26", "8FtFjY", "E1qU0i", "W72lex", "FLttRS", "3kzFit", "QZPoNO",
+    "Dcobly", "e4uxD2", "Q6Ol1C", "VZcS6K", "8mKUHW", "fMbkZP", "F9reXB", "hqh4LD",
+    "fILpU7", "GT2mLi", "LyLPX4", "WJ7h1B", "WzkDTQ", "1VkacB", "bkaJyv", "PEZIDe",
+    "SbMZAx", "d5ikIi", "TU8Fjr", "jc3cJ2", "YYybDI", "VJ5DMV", "0EI8Df", "VPJp60",
+    "TvVlkZ", "mmkNGo", "sYl2eZ", "uZo5Nr", "WBPneE", "u1CJt7", "46F2wt", "o5E9l8",
+    "wKZb4t", "cp35zD", "65l9su", "WcP9qQ", "WBjdzx", "xU9Xeh", "br6itA", "Zi0a8d",
+    "2YWMTt", "dzbZA6", "Ww7N11", "hidlZC", "707gHu", "NSze2v", "vHlULq", "DounBA",
+    "t1s7uM", "WIe4nL", "KHgkqx", "QliIYV", "l4JfjM", "iW3Pn1", "gEXA5n", "DQ4lI4",
+    "D5SCE6", "GziEP4", "V90wJL", "6q4AG5", "NSum5Q", "C6mZRW", "mYEcnu", "VRYasl",
+    "XASSL3", "7JCGlE", "6QdKCP", "l7Y4JQ", "jRdtIe", "jwCqlQ", "W8pygq", "p2HtHQ",
+    "6eXY5C", "UTrWy6", "PxxjIt", "zcDo3E", "tuFxrb", "DwJig8", "4bl2Nm", "qv7Zx2",
+    "iCzcCx", "5Ee7nb", "eAxumv", "7SabPD", "X5Oe2m", "hyNFB3", "jNa5A6", "h8RcX1",
+    "j7sEhe", "GWyVWu", "qmb98z", "BDPmL4", "fATSfI", "ETAFvf", "TN6DF4", "RqaESd",
+    "oSDozl", "svXcdU", "z9LrUa", "tdT1ZA", "qwrc8a", "zRoyMy", "tGg4y2", "PplEzk",
+    "bXzNRM", "OMfGzM", "dIrxBv", "hBnCyK", "NjHZCk", "1VOGH5", "ZgDqfM", "DnMGKy",
+    "Y034Gj", "tB3f9B", "P2N98i", "Q2TO32", "4SKpUo", "p7ostL", "Sl8B3W", "xeMQAe",
+    "530FpH", "1qNwGi", "iCl5xa", "U3PNEn", "YkPMXd", "EY9bBq", "l1l1Px", "qffjLJ",
+    "aUxNcq", "rOOPZh", "Hfs2gJ", "FXsVQi", "g43xbY", "fRuqgo", "1N6jlO", "saUXjm",
+    "qZY5M8", "c6gRgp", "RnZ1rt", "aa5voA", "tgKkSO", "JUt3Tz", "5GVwld", "PXudyK",
+    "z3lTed", "1wEuZ7", "jZYId4", "35QoEj", "U1T4A1", "54faqZ", "1ZefKu", "K44eI6",
+    "NkFHXX", "iTVQWL", "mUNkOT", "MTAsI8", "ksNlJG", "3wiBk6", "St153Y", "c5ubDV",
+    "HAjZyz", "Cs2Lpk", "BgrP0l", "kMqKTk", "X9SNI6", "tfySZw", "m7mdAk", "rGP5JB",
+    "ZTFxz9", "JoGAan", "aIYVnC", "IC330m", "Pbma7o", "2yak72", "6VX1H0", "jHkccX",
+    "jCti3x", "jsCnu4", "PKYsyV", "ch9FRj", "f1qcKV", "FoJpAI", "SSGxGO", "kRF2cF",
+    "3nFr7e", "xH8EYf", "Cf41oy", "gto8Up", "cn648N", "jKIxBq", "J5hW6d", "fqn8fZ",
+    "Zdq050", "lShKjq", "67lxOt", "I8vTww", "fOjwda", "sBfNDW", "tXbl97", "SrxCp8",
+    "w19FvT", "XVT3kt", "OyDxkf", "P5fwK9", "ntENPY", "1UPnH0", "DaAvYz", "MuFUAe",
+    "p1UCtc", "uHS1Q8", "zrCNP6", "LqZo11", "QRpNTk", "rYiljl", "S6kawu", "ulCpem",
+    "zSrI0J", "EGqyAU", "QXI8xG", "DGXzT0", "UTnnvh", "jseduc", "hJfMEc", "DLFSsm",
+    "HEmrPY", "d1xWT8", "rEMgAU", "lH45mr", "PIKMG3", "ae8rpq", "lgIONH", "HXIG4G",
+    "Daww60", "0Su5lL", "2yqFyU", "E3whdH", "bAa9Pi", "egmlQK", "Dkyt3a", "cgCwjZ",
+    "VUNOOY", "eokyKL", "oZe7x6", "XkzCXe", "RMlzzJ", "gch0DO", "ERTv2N", "l1qnRJ",
+    "mHj7fg", "64skaE", "cJmbir", "CwsNT2", "hWTATy", "ObFsu0", "ddgCUi", "Q3IspF",
+    "f3HZbl", "jbcD53", "0xb4F1", "d4FGW2", "d6C36h", "eq8Kng", "tHBEvS", "nhoRm8",
+    "qzQLCv", "RURY4B", "Ngm5VO", "2csbJI", "5H8Zf9", "ypEVQj", "eLCa9r", "f7G0CP",
+    "sZjOZQ", "bSrscU", "ifDgO1", "Jr80MR", "Q39OdE", "0LwZES", "G3w3mz", "thkoWv",
+    "KZBzXb", "RPVEUb", "bYMjVq", "YzHMFG", "5ns85r", "nX5tVn", "hmDHsT", "cUI0kx",
+    "igsFeR", "K0jkNF", "dLIXcT", "XsW40J", "QcnVKE", "gu9xdA"
+]
 
 @dataclass
 class TestResults:
     """Test results with statistics."""
+
     total_requests: int = 0
     successful: int = 0
     failed: int = 0
     total_time: float = 0
     response_times: list = field(default_factory=list)
     errors: dict = field(default_factory=dict)
-    
+
     @property
     def rps(self) -> float:
         return self.total_requests / self.total_time if self.total_time > 0 else 0
-    
+
     @property
     def success_rate(self) -> float:
-        return (self.successful / self.total_requests * 100) if self.total_requests > 0 else 0
-    
+        return (
+            (self.successful / self.total_requests * 100)
+            if self.total_requests > 0
+            else 0
+        )
+
     def percentile(self, p: int) -> float:
         if not self.response_times:
             return 0
@@ -110,7 +115,9 @@ class TestResults:
         return sorted_times[min(idx, len(sorted_times) - 1)]
 
 
-def make_redirect_request(url: str, timeout: float = 5.0) -> tuple[bool, float, Optional[str]]:
+def make_redirect_request(
+    url: str, timeout: float = 5.0
+) -> tuple[bool, float, Optional[str]]:
     """Make a single redirect request. Returns (success, response_time_ms, error)."""
     start = time.perf_counter()
     try:
@@ -132,6 +139,7 @@ def make_redirect_request(url: str, timeout: float = 5.0) -> tuple[bool, float, 
 
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     """Handler that doesn't follow redirects."""
+
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
 
@@ -140,24 +148,24 @@ def run_load_test(
     base_url: str,
     total_requests: int,
     concurrent: int,
-    duration: Optional[float] = None
+    duration: Optional[float] = None,
 ) -> TestResults:
     """Run high-performance load test."""
     results = TestResults()
     lock = threading.Lock()
     stop_event = threading.Event()
-    
+
     # Pre-generate all URLs for speed
     urls = [f"{base_url}/{random.choice(SHORT_CODES)}" for _ in range(total_requests)]
-    
+
     completed = [0]
-    
+
     def worker(url: str) -> None:
         if stop_event.is_set():
             return
-        
+
         success, response_time, error = make_redirect_request(url)
-        
+
         with lock:
             if success:
                 results.successful += 1
@@ -167,27 +175,27 @@ def run_load_test(
                     results.errors[error] = results.errors.get(error, 0) + 1
             results.response_times.append(response_time)
             completed[0] += 1
-    
+
     print(f"\n{'='*60}")
-    print(f"  REDIRECT LOAD TEST - Target: 1000+ RPS")
+    print("  REDIRECT LOAD TEST - Target: 1000+ RPS")
     print(f"{'='*60}")
     print(f"  URL: {base_url}")
     print(f"  Short codes: {len(SHORT_CODES)}")
     print(f"  Total requests: {total_requests}")
     print(f"  Concurrent connections: {concurrent}")
     print(f"{'='*60}")
-    print(f"\n  Progress: ", end="", flush=True)
-    
+    print("\n  Progress: ", end="", flush=True)
+
     start_time = time.perf_counter()
-    
+
     # Set timer if duration specified
     if duration:
         timer = threading.Timer(duration, stop_event.set)
         timer.start()
-    
+
     with ThreadPoolExecutor(max_workers=concurrent) as executor:
         futures = [executor.submit(worker, url) for url in urls]
-        
+
         last_progress = 0
         for future in as_completed(futures):
             if stop_event.is_set():
@@ -196,22 +204,22 @@ def run_load_test(
             if progress >= last_progress + 10:
                 print("█", end="", flush=True)
                 last_progress = progress
-    
+
     results.total_time = time.perf_counter() - start_time
     results.total_requests = completed[0]
-    
+
     if duration:
         timer.cancel()
-    
+
     print(" Done!\n")
-    
+
     return results
 
 
 def print_results(results: TestResults):
     """Print formatted results."""
     print(f"{'='*60}")
-    print(f"  RESULTS")
+    print("  RESULTS")
     print(f"{'='*60}")
     print(f"  Total Requests:     {results.total_requests:,}")
     print(f"  Successful:         {results.successful:,} ({results.success_rate:.1f}%)")
@@ -220,29 +228,31 @@ def print_results(results: TestResults):
     print(f"{'='*60}")
     print(f"  ⚡ REQUESTS/SEC:    {results.rps:,.2f}")
     print(f"{'='*60}")
-    print(f"  Response Times:")
+    print("  Response Times:")
     print(f"    Min:              {min(results.response_times):.2f}ms")
-    print(f"    Avg:              {sum(results.response_times)/len(results.response_times):.2f}ms")
+    print(
+        f"    Avg:              {sum(results.response_times)/len(results.response_times):.2f}ms"
+    )
     print(f"    P50 (median):     {results.percentile(50):.2f}ms")
     print(f"    P95:              {results.percentile(95):.2f}ms")
     print(f"    P99:              {results.percentile(99):.2f}ms")
     print(f"    Max:              {max(results.response_times):.2f}ms")
-    
+
     if results.errors:
         print(f"{'='*60}")
-        print(f"  Errors:")
+        print("  Errors:")
         for error, count in sorted(results.errors.items(), key=lambda x: -x[1])[:5]:
             print(f"    {error}: {count}")
-    
+
     print(f"{'='*60}")
-    
+
     # Performance verdict
     if results.rps >= 1000:
         print(f"  ✅ TARGET ACHIEVED: {results.rps:,.0f} RPS >= 1000 RPS")
     else:
         print(f"  ❌ TARGET NOT MET: {results.rps:,.0f} RPS < 1000 RPS")
-        print(f"     Try increasing --concurrent or check server performance")
-    
+        print("     Try increasing --concurrent or check server performance")
+
     print(f"{'='*60}\n")
 
 
@@ -260,21 +270,27 @@ Examples:
 
   # Different server
   python scripts/redirect_load_test.py --url http://localhost:8080
-        """
+        """,
     )
     parser.add_argument("--url", default="http://localhost:8000", help="Base URL")
-    parser.add_argument("--requests", "-n", type=int, default=10000, help="Total requests")
-    parser.add_argument("--concurrent", "-c", type=int, default=500, help="Concurrent connections")
-    parser.add_argument("--duration", "-d", type=float, default=None, help="Max duration in seconds")
+    parser.add_argument(
+        "--requests", "-n", type=int, default=10000, help="Total requests"
+    )
+    parser.add_argument(
+        "--concurrent", "-c", type=int, default=500, help="Concurrent connections"
+    )
+    parser.add_argument(
+        "--duration", "-d", type=float, default=None, help="Max duration in seconds"
+    )
     args = parser.parse_args()
-    
+
     results = run_load_test(
         base_url=args.url.rstrip("/"),
         total_requests=args.requests,
         concurrent=args.concurrent,
-        duration=args.duration
+        duration=args.duration,
     )
-    
+
     print_results(results)
 
 

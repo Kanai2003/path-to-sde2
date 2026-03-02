@@ -1,10 +1,12 @@
 """Rate limiting configuration using slowapi."""
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from slowapi import Limiter
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
-from fastapi import Request, FastAPI
-from fastapi.responses import JSONResponse
+from slowapi.util import get_remote_address
+
 from app.core.config import settings
 
 
@@ -20,14 +22,12 @@ if settings.RATE_LIMIT_ENABLED:
     limiter = Limiter(
         key_func=get_rate_limit_key,
         storage_uri=settings.REDIS_URL,
-        strategy="fixed-window"
+        strategy="fixed-window",
     )
 else:
     # Use in-memory storage when disabled (won't actually limit)
     limiter = Limiter(
-        key_func=get_rate_limit_key,
-        storage_uri="memory://",
-        strategy="fixed-window"
+        key_func=get_rate_limit_key, storage_uri="memory://", strategy="fixed-window"
     )
 
 
@@ -42,9 +42,9 @@ def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
         status_code=429,
         content={
             "detail": "Rate limit exceeded",
-            "message": f"Too many requests. Please try again later.",
-            "retry_after": exc.detail
-        }
+            "message": "Too many requests. Please try again later.",
+            "retry_after": exc.detail,
+        },
     )
 
 
@@ -68,4 +68,5 @@ def conditional_rate_limit():
         # No-op decorator when rate limiting is disabled
         def no_op_decorator(func):
             return func
+
         return no_op_decorator

@@ -18,6 +18,8 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pydantic>=2.12.5",
     "redis>=7.2.1",
+    # Background Jobs
+    "apscheduler>=3.10.0",
     # Rate Limiting
     "slowapi>=0.1.9",
     # Logging
@@ -50,6 +52,8 @@ target-version = ["py311"]
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+
+[tool.ruff.lint]
 select = ["E", "F", "I"]
 
 [tool.ruff.lint.isort]
@@ -61,3 +65,6 @@ profile = "black"
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = ["pre-commit>=4.5.1"]

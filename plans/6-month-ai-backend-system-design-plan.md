@@ -1,6 +1,6 @@
 # 🚀 6-Month Execution Plan – Backend + System Design + AI Product Engineer
 
-> Daily time: 2 hrs weekdays + 5–6 hrs weekend  
+> Daily time: 2 hrs weekdays + 5–6 hrs weekend
 > Rule: Learn → Build → Write in public
 
 ---
@@ -16,7 +16,7 @@
 - [x] Idempotency
 - [x] Pagination
 
-🔗 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design  
+🔗 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
 🔗 https://cloud.google.com/apis/design
 
 ### Build
@@ -72,7 +72,7 @@
 - Message queues
 - Event-driven architecture
 
-🔗 https://www.rabbitmq.com/tutorials/tutorial-one-python.html  
+🔗 https://www.rabbitmq.com/tutorials/tutorial-one-python.html
 🔗 https://kafka.apache.org/documentation/
 
 ### Build
@@ -91,7 +91,7 @@
 - OAuth basics
 - Rate limiting
 
-🔗 https://fastapi.tiangolo.com/tutorial/security/  
+🔗 https://fastapi.tiangolo.com/tutorial/security/
 🔗 https://cheatsheetseries.owasp.org/
 
 ### Build
@@ -119,7 +119,7 @@
 
 ### Learn
 
-🔗 https://fullstackopen.com/en/part4/testing_the_backend  
+🔗 https://fullstackopen.com/en/part4/testing_the_backend
 🔗 https://docs.github.com/en/actions
 
 ### Build

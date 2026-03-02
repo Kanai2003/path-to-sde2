@@ -1,12 +1,14 @@
 """URL redirection endpoint."""
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from app.services.url_redirection_service import get_url_redirection_service
+
 from app.api.deps import get_db
-from app.core.exceptions import URLNotFoundError
-from app.core.rate_limiter import limiter, get_rate_limit_string
 from app.core.config import settings
+from app.core.exceptions import URLNotFoundError
+from app.core.rate_limiter import get_rate_limit_string, limiter
+from app.services.url_redirection_service import get_url_redirection_service
 
 router = APIRouter()
 
@@ -17,14 +19,14 @@ router = APIRouter()
     response_class=RedirectResponse,
     responses={
         302: {"description": "Redirect to original URL"},
-        404: {"description": "Short code not found"}
-    }
+        404: {"description": "Short code not found"},
+    },
 )
-@limiter.limit(get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED)
+@limiter.limit(
+    get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED
+)
 def redirect_url(
-    request: Request,
-    short_code: str,
-    db: Session = Depends(get_db)
+    request: Request, short_code: str, db: Session = Depends(get_db)
 ) -> RedirectResponse:
     """Redirect short code to original URL."""
     service = get_url_redirection_service(db)
@@ -35,5 +37,5 @@ def redirect_url(
     except URLNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Short code '{short_code}' not found"
+            detail=f"Short code '{short_code}' not found",
         )

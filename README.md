@@ -15,7 +15,7 @@ Become a highly skilled Software Engineer capable of building end-to-end, real-w
 
 See the detailed week-by-week execution plan: [6-Month Plan](6-month-ai-backend-system-design-plan.md)
 
-**Schedule:** 2 hrs/weekday + 5-6 hrs/weekend  
+**Schedule:** 2 hrs/weekday + 5-6 hrs/weekend
 **Approach:** Learn → Build → Write in Public
 
 ## Progress Tracker

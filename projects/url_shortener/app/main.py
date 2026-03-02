@@ -1,16 +1,17 @@
 from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from app.api.v1.router import api_router
+
 from app.api.v1.endpoints.url_redirect import router as redirect_router
+from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.rate_limiter import setup_rate_limiter
-from fastapi.middleware.cors import CORSMiddleware
+from app.core.scheduler import analytics_scheduler
 
 app = FastAPI(
-    title="URL Shortener", 
-    description="URL shortening service", 
-    version="1.0.0"
+    title="URL Shortener", description="URL shortening service", version="1.0.0"
 )
 
 app.add_middleware(
@@ -28,6 +29,19 @@ setup_rate_limiter(app)
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Start background services on app startup."""
+    analytics_scheduler.start()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stop background services on app shutdown."""
+    analytics_scheduler.stop()
+
+
+# Serve homepage with URL submission form
 @app.get("/", response_class=HTMLResponse)
 def read_root():
     """Serve the URL shortener homepage."""

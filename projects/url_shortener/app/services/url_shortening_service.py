@@ -1,11 +1,13 @@
 """Service for URL shortening operations."""
+
+from app.core.cache.url_cache import url_cache
 from sqlalchemy.orm import Session
-from app.repositories.url_repository import url_repository
-from app.utils.shortener import generate_short_code
-from app.models.url import URL
+
 from app.core.exceptions import ShortCodeGenerationError
+from app.models.url import URL
+from app.repositories.url_repository import url_repository
 from app.utils.logger import logger
-from projects.url_shortener.app.core.cache.url_cache import url_cache
+from app.utils.shortener import generate_short_code
 
 
 class URLShorteningService:
@@ -37,17 +39,14 @@ class URLShorteningService:
         short_code = self._generate_unique_code(original_url)
 
         # create URL record in database
-        created_url =  self.repo.create(
-            self.db,
-            original_url=original_url,
-            short_code=short_code
+        created_url = self.repo.create(
+            self.db, original_url=original_url, short_code=short_code
         )
-        
+
         # cache the mapping for faster future lookups
         url_cache.cache_url(short_code, original_url)
-        
+
         return created_url
-        
 
     def _generate_unique_code(self, original_url: str, max_attempts: int = 5) -> str:
         """Generate a unique short code, handling collisions."""
@@ -55,7 +54,9 @@ class URLShorteningService:
             code = generate_short_code(original_url, salt=attempt)
             if not self.repo.exists_by_code(self.db, code):
                 return code
-        logger.error(f"Short Code generation failed for URL: {original_url} after {max_attempts} attempts")
+        logger.error(
+            f"Short Code generation failed for URL: {original_url} after {max_attempts} attempts"
+        )
         raise ShortCodeGenerationError(
             f"Failed to generate unique code after {max_attempts} attempts"
         )

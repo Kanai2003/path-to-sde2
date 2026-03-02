@@ -1,12 +1,14 @@
 """URL shortening endpoints."""
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
+
+from app.api.deps import get_db
+from app.core.config import settings
+from app.core.exceptions import ShortCodeGenerationError
+from app.core.rate_limiter import get_rate_limit_string, limiter
 from app.schemas.url import URLCreate, URLResponse
 from app.services.url_shortening_service import get_url_shortening_service
-from app.api.deps import get_db
-from app.core.exceptions import ShortCodeGenerationError
-from app.core.rate_limiter import limiter, get_rate_limit_string
-from app.core.config import settings
 
 router = APIRouter()
 
@@ -16,13 +18,13 @@ router = APIRouter()
     response_model=URLResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create shortened URL",
-    response_description="The created shortened URL"
+    response_description="The created shortened URL",
 )
-@limiter.limit(get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED)
+@limiter.limit(
+    get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED
+)
 def create_url(
-    request: Request,
-    data: URLCreate,
-    db: Session = Depends(get_db)
+    request: Request, data: URLCreate, db: Session = Depends(get_db)
 ) -> URLResponse:
     """
     Create a shortened URL from the original URL.
@@ -36,6 +38,5 @@ def create_url(
         return URLResponse.model_validate(url)
     except ShortCodeGenerationError as e:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )

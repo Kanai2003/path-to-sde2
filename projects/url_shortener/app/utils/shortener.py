@@ -1,4 +1,5 @@
 """URL shortening utilities."""
+
 import hashlib
 import string
 
