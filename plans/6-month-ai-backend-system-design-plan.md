@@ -53,7 +53,7 @@
 
 - [x] Cache aside
 - [x] Write through
-- Redis data structures
+- [x] Redis data structures
 
 🔗 https://redis.io/docs/latest/develop/get-started/
 
