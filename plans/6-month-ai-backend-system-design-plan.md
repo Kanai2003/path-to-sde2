@@ -69,7 +69,7 @@
 
 ### Learn
 
-- Message queues
+- Message queues (RabbitMQ/Kafka etc)
 - Event-driven architecture
 
 🔗 https://www.rabbitmq.com/tutorials/tutorial-one-python.html
