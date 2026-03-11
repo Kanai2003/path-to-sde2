@@ -10,12 +10,10 @@ services:
   app:
     build:
       context: .
-      target: development # Use 'production' for prod builds
+      target: production # Production build with multiple workers
     ports:
       - "8000:8000"
-    volumes:
-      # Mount source code for hot-reload (dev only)
-      - ./app:/app/app:ro
+    # Remove volume mount in production for better performance
     environment:
       - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/url_shortener_db
       - REDIS_URL=redis://redis:6379

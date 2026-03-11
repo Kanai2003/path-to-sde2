@@ -53,5 +53,7 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Run without reload, with multiple workers
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# High-performance production config:
+# - 4 workers (adjust based on CPU cores: 2*cores + 1)
+# - 500 concurrent connections per worker via backlog
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--backlog", "2048"]
