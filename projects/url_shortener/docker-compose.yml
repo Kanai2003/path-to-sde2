@@ -64,6 +64,24 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # ===========================================
+  # Analytics Worker (Event Consumer)
+  # ===========================================
+  analytics-worker:
+    build:
+      context: .
+      target: development
+    command: python -m app.workers.analytics_worker
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/url_shortener_db
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    # Scale workers horizontally:
+    # docker compose up --scale analytics-worker=3
+
 volumes:
   postgres_data:
   redis_data:

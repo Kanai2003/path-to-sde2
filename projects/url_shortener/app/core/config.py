@@ -20,7 +20,12 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = False  # Disabled by default for local testing
     RATE_LIMIT_REQUESTS: int = 100  # Number of requests
     RATE_LIMIT_WINDOW: str = "minute"  # Time window: second, minute, hour, day
+    
     REDIS_URL: str = "redis://localhost:6379"
+    REDIS_DB_CACHE: int = 0  # For caching URL mappings
+    REDIS_DB_ANALYTICS: int = 1 # For analytics data
+    REDIS_DB_QUEUE: int = 2 # For message queue
+    
 
 
 settings = Settings()

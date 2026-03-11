@@ -1,11 +1,15 @@
 """Service for URL redirection operations."""
 
+from datetime import datetime
+
+from app.utils import logger
 from sqlalchemy.orm import Session
 
 from app.core.cache.url_cache import url_cache
 from app.core.exceptions import URLNotFoundError
 from app.repositories.url_repository import url_repository
 from app.services.analytics_service import get_analytics_service
+from app.core.message_queue.message_queue import analytics_queue
 
 
 class URLRedirectionService:
@@ -32,8 +36,10 @@ class URLRedirectionService:
         # check cache first for faster retrieval
         cached_url = url_cache.get_cached_url(short_code)
         if cached_url:
-            # Record analytics for cached hits too
-            self.analytics.record_click(short_code)
+            if not analytics_queue.publish("click", {"short_code": short_code}):
+                # Queue failed - fallback to direct increment
+                logger.warning("Queue unavailable, using sync analytics")
+                self.analytics.record_click(short_code)
             return cached_url
 
         # fallback to database lookup if not in cache
@@ -45,8 +51,11 @@ class URLRedirectionService:
         # cache the result for future requests
         url_cache.cache_url(short_code, url_entity.original_url)
 
-        # Record click in Redis analytics (replaces DB increment)
-        self.analytics.record_click(short_code)
+
+        if not analytics_queue.publish("click", {"short_code": short_code}):
+                # Queue failed - fallback to direct increment
+                logger.warning("Queue unavailable, using sync analytics")
+                self.analytics.record_click(short_code)
 
         return url_entity.original_url
 
