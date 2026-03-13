@@ -1,23 +1,25 @@
-"""Service for syncing analytics data from Redis to database."""
+"""
+Async service for syncing analytics data from Redis to database.
+"""
 
 from typing import Dict
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache.analytics_cache import analytics_cache
+from app.core.cache import get_analytics_cache
 from app.services.analytics_service import get_analytics_service
 from app.utils.logger import logger
 
 
 class AnalyticsSyncService:
-    """Service for periodic syncing of analytics data to database."""
+    """Async service for periodic syncing of analytics data to database."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.analytics_service = get_analytics_service(db)
-        self.cache = analytics_cache
+        self.cache = get_analytics_cache()
 
-    def sync_analytics(self) -> Dict[str, int]:
+    async def sync_analytics(self) -> Dict[str, int]:
         """
         Sync all pending analytics data from Redis to database.
 
@@ -31,7 +33,7 @@ class AnalyticsSyncService:
 
         try:
             # Get all click data from Redis
-            click_data = self.cache.get_all_clicks()
+            click_data = await self.cache.get_all_clicks()
 
             if not click_data:
                 logger.info("No analytics data to sync")
@@ -40,7 +42,7 @@ class AnalyticsSyncService:
             logger.info(f"Syncing analytics for {len(click_data)} URLs")
 
             # Sync to database
-            urls_updated = self.analytics_service.sync_clicks_to_database()
+            urls_updated = await self.analytics_service.sync_clicks_to_database()
 
             # Calculate total clicks synced
             total_clicks = sum(click_data.values())
@@ -59,7 +61,7 @@ class AnalyticsSyncService:
 
         return stats
 
-    def get_sync_status(self) -> Dict[str, int]:
+    async def get_sync_status(self) -> Dict[str, int]:
         """
         Get current sync status - how many clicks are pending sync.
 
@@ -67,7 +69,7 @@ class AnalyticsSyncService:
             Dict with pending sync information
         """
         try:
-            click_data = self.cache.get_all_clicks()
+            click_data = await self.cache.get_all_clicks()
             total_pending_clicks = sum(click_data.values())
 
             return {
@@ -79,6 +81,6 @@ class AnalyticsSyncService:
             return {"urls_with_pending_clicks": 0, "total_pending_clicks": 0}
 
 
-def get_analytics_sync_service(db: Session) -> AnalyticsSyncService:
+def get_analytics_sync_service(db: AsyncSession) -> AnalyticsSyncService:
     """Dependency injection helper."""
     return AnalyticsSyncService(db)

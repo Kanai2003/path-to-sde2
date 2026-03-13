@@ -1,7 +1,7 @@
 """URL shortening endpoints."""
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
 from app.core.config import settings
@@ -23,8 +23,8 @@ router = APIRouter()
 @limiter.limit(
     get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED
 )
-def create_url(
-    request: Request, data: URLCreate, db: Session = Depends(get_db)
+async def create_url(
+    request: Request, data: URLCreate, db: AsyncSession = Depends(get_db)
 ) -> URLResponse:
     """
     Create a shortened URL from the original URL.
@@ -34,7 +34,7 @@ def create_url(
     service = get_url_shortening_service(db)
 
     try:
-        url = service.create_short_url(str(data.original_url))
+        url = await service.create_short_url(str(data.original_url))
         return URLResponse.model_validate(url)
     except ShortCodeGenerationError as e:
         raise HTTPException(

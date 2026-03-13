@@ -1,29 +1,33 @@
 [project]
 name = "url-shortener"
-version = "0.1.0"
-description = "Modular FastAPI URL Shortener"
+version = "0.2.0"
+description = "High-Performance Async FastAPI URL Shortener"
 authors = [{ name = "Kanai" }]
 requires-python = ">=3.11"
 
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
-    # DB
-    "sqlalchemy>=2.0.30",
-    "psycopg[binary]>=3.2.0",
+    # DB - Async
+    "sqlalchemy[asyncio]>=2.0.30",
+    "asyncpg>=0.29.0",             # Async PostgreSQL driver
+    "psycopg[binary]>=3.2.0",      # Keep for alembic migrations
     "alembic>=1.13.0",
     # Config
     "pydantic-settings>=2.4.0",
     # Utils
     "python-dotenv>=1.0.1",
     "pydantic>=2.12.5",
-    "redis>=7.2.1",
+    # Redis - Async
+    "redis[hiredis]>=5.0.0", # hiredis for 10x faster parsing
     # Background Jobs
     "apscheduler>=3.10.0",
     # Rate Limiting
     "slowapi>=0.1.9",
     # Logging
     "structlog>=24.0.0",
+    # Performance
+    "orjson>=3.10.0", # Fast JSON serialization
 ]
 
 [project.optional-dependencies]

@@ -3,7 +3,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-from app.api.deps import get_db
+from app.db.session import AsyncSessionLocal
 from app.services.analytics_sync_service import get_analytics_sync_service
 from app.utils.logger import logger
 
@@ -48,22 +48,15 @@ class AnalyticsScheduler:
     async def _sync_analytics_job(self) -> None:
         """Background job to sync analytics data."""
         try:
-            # get database session
-            db = next(get_db())
-
-            # create sync service and run sync
-            sync_service = get_analytics_sync_service(db)
-            stats = sync_service.sync_analytics()
-
-            logger.info(f"Periodic analytics sync: {stats}")
+            # Get async database session
+            async with AsyncSessionLocal() as db:
+                # Create sync service and run sync
+                sync_service = get_analytics_sync_service(db)
+                stats = await sync_service.sync_analytics()
+                logger.info(f"Periodic analytics sync: {stats}")
 
         except Exception as e:
             logger.error(f"Analytics sync job failed: {e}")
-
-        finally:
-            # clean up database session
-            if "db" in locals():
-                db.close()
 
 
 # Global scheduler instance

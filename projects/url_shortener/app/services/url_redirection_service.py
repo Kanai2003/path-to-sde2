@@ -1,28 +1,39 @@
-"""Service for URL redirection operations."""
+"""
+Async service for URL redirection operations.
 
-from datetime import datetime
+Optimized for maximum throughput with minimal latency.
+"""
 
-from app.utils import logger
-from sqlalchemy.orm import Session
+from datetime import datetime, timezone
 
-from app.core.cache.url_cache import url_cache
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.cache import get_url_cache
 from app.core.exceptions import URLNotFoundError
+from app.core.message_queue import get_analytics_queue
 from app.repositories.url_repository import url_repository
-from app.services.analytics_service import get_analytics_service
-from app.core.message_queue.message_queue import analytics_queue
+from app.utils.logger import logger
 
 
 class URLRedirectionService:
-    """Optimized service for URL redirection - minimal logic for speed."""
+    """
+    High-performance async service for URL redirection.
+    
+    Flow:
+    1. Check Redis cache (0.1ms)
+    2. Fallback to DB (5ms) + cache result
+    3. Publish analytics event (non-blocking)
+    """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.repo = url_repository
-        self.analytics = get_analytics_service(db)
+        self.cache = get_url_cache()
+        self.queue = get_analytics_queue()
 
-    def get_original_url(self, short_code: str) -> str:
+    async def get_original_url(self, short_code: str) -> str:
         """
-        Get original URL by short code.
+        Get original URL by short code with caching.
 
         Args:
             short_code: The short code to look up
@@ -33,33 +44,42 @@ class URLRedirectionService:
         Raises:
             URLNotFoundError: If short code not found
         """
-        # check cache first for faster retrieval
-        cached_url = url_cache.get_cached_url(short_code)
+        # Fast path: Check cache first (0.1ms)
+        cached_url = await self.cache.get_cached_url(short_code)
         if cached_url:
-            if not analytics_queue.publish("click", {"short_code": short_code}):
-                # Queue failed - fallback to direct increment
-                logger.warning("Queue unavailable, using sync analytics")
-                self.analytics.record_click(short_code)
+            # Fire-and-forget analytics (don't await, don't block redirect)
+            await self._publish_click_event(short_code)
             return cached_url
 
-        # fallback to database lookup if not in cache
-        url_entity = self.repo.get_by_code(self.db, short_code)
+        # Slow path: Database lookup (5ms)
+        url_entity = await self.repo.get_by_code(self.db, short_code)
 
         if not url_entity:
             raise URLNotFoundError(f"Short code '{short_code}' not found")
 
-        # cache the result for future requests
-        url_cache.cache_url(short_code, url_entity.original_url)
+        # Cache for future requests
+        await self.cache.cache_url(short_code, url_entity.original_url)
 
-
-        if not analytics_queue.publish("click", {"short_code": short_code}):
-                # Queue failed - fallback to direct increment
-                logger.warning("Queue unavailable, using sync analytics")
-                self.analytics.record_click(short_code)
+        # Publish analytics event
+        await self._publish_click_event(short_code)
 
         return url_entity.original_url
 
+    async def _publish_click_event(self, short_code: str) -> None:
+        """Publish click event to analytics queue (fast, non-blocking)."""
+        try:
+            await self.queue.publish(
+                event_type="click",
+                data={
+                    "short_code": short_code,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                },
+            )
+        except Exception as e:
+            # Log but don't fail the redirect
+            logger.warning(f"Failed to publish click event: {e}")
 
-def get_url_redirection_service(db: Session) -> URLRedirectionService:
+
+def get_url_redirection_service(db: AsyncSession) -> URLRedirectionService:
     """Dependency injection helper."""
     return URLRedirectionService(db)

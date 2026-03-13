@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
 from app.core.config import settings
@@ -25,14 +25,14 @@ router = APIRouter()
 @limiter.limit(
     get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED
 )
-def redirect_url(
-    request: Request, short_code: str, db: Session = Depends(get_db)
+async def redirect_url(
+    request: Request, short_code: str, db: AsyncSession = Depends(get_db)
 ) -> RedirectResponse:
     """Redirect short code to original URL."""
     service = get_url_redirection_service(db)
 
     try:
-        original_url = service.get_original_url(short_code)
+        original_url = await service.get_original_url(short_code)
         return RedirectResponse(url=original_url, status_code=status.HTTP_302_FOUND)
     except URLNotFoundError:
         raise HTTPException(
