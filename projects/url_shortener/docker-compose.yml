@@ -24,7 +24,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    restart: unless-stopped
+    restart: "no"
 
   # ===========================================
   # PostgreSQL Database
@@ -44,7 +44,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
+    restart: "no"
 
   # ===========================================
   # Redis Cache
@@ -60,7 +60,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
+    restart: "no"
 
   # ===========================================
   # Analytics Worker (Event Consumer)
@@ -76,7 +76,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    restart: unless-stopped
+    restart: "no"
     # Scale workers horizontally:
     # docker compose up --scale analytics-worker=3
 
