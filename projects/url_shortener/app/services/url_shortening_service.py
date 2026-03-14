@@ -34,9 +34,9 @@ class URLShorteningService:
             ShortCodeGenerationError: If unable to generate unique code
         """
         # Check if URL already exists (idempotency)
-        existing = await self.repo.get_by_original_url(self.db, original_url)
-        if existing:
-            return existing
+        # existing = await self.repo.get_by_original_url(self.db, original_url)
+        # if existing:
+        #     return existing
 
         # Generate unique short code with collision handling
         short_code = await self._generate_unique_code(original_url)
