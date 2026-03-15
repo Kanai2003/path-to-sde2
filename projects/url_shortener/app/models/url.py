@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 
 
-class URL(Base):
+class Url(Base):
     """URL model for storing shortened URLs."""
 
     __tablename__ = "urls"
@@ -30,4 +30,6 @@ class URL(Base):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     def __repr__(self) -> str:
-        return f"<URL(short_code={self.short_code})>"
+        return f"<Url(short_code={self.short_code})>"
+
+URL = Url

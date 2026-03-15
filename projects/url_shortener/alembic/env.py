@@ -7,6 +7,7 @@ from alembic import context
 # Load app config and models
 from app.core.config import settings
 from app.db.base import Base
+from app.models import refresh_token, url, user
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

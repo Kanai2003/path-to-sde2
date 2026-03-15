@@ -5,19 +5,18 @@ All database operations are now non-blocking for high concurrency.
 """
 
 from datetime import UTC, datetime
-from typing import Optional
 
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.url import URL
+from app.models.url import URL, Url
 
 
 class URLRepository:
     """Async repository for URL database operations."""
 
     @staticmethod
-    async def create(db: AsyncSession, *, original_url: str, short_code: str) -> URL:
+    async def create(db: AsyncSession, *, original_url: str, short_code: str) -> Url:
         """Create a new URL record."""
         url = URL(
             original_url=original_url,
@@ -31,18 +30,18 @@ class URLRepository:
         return url
 
     @staticmethod
-    async def get_by_code(db: AsyncSession, short_code: str) -> Optional[URL]:
+    async def get_by_code(db: AsyncSession, short_code: str) -> Url | None:
         """Get URL by short code."""
         result = await db.execute(
-            select(URL).where(URL.short_code == short_code, URL.is_active)
+            select(URL).where(URL.short_code == short_code, URL.is_active.is_(True))
         )
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def get_by_original_url(db: AsyncSession, original_url: str) -> Optional[URL]:
+    async def get_by_original_url(db: AsyncSession, original_url: str) -> Url | None:
         """Get URL by original URL."""
         result = await db.execute(
-            select(URL).where(URL.original_url == original_url, URL.is_active)
+            select(URL).where(URL.original_url == original_url, URL.is_active.is_(True))
         )
         return result.scalar_one_or_none()
 
@@ -64,7 +63,7 @@ class URLRepository:
         """
         await db.execute(
             update(URL)
-            .where(URL.short_code == short_code, URL.is_active)
+            .where(URL.short_code == short_code, URL.is_active.is_(True))
             .values(
                 fetch_count=URL.fetch_count + count,
                 updated_at=datetime.now(UTC),
