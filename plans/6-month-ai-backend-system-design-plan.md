@@ -69,8 +69,8 @@
 
 ### Learn
 
-- Message queues (RabbitMQ/Kafka etc)
-- Event-driven architecture
+- [x] Message queues (RabbitMQ/Kafka etc)
+- [x] Event-driven architecture
 
 🔗 https://www.rabbitmq.com/tutorials/tutorial-one-python.html
 🔗 https://kafka.apache.org/documentation/
@@ -89,7 +89,7 @@
 
 - JWT
 - OAuth basics
-- Rate limiting
+- [x] Rate limiting
 
 🔗 https://fastapi.tiangolo.com/tutorial/security/
 🔗 https://cheatsheetseries.owasp.org/
@@ -307,5 +307,3 @@ Node-based execution engine:
 ## Week 24 – FINAL PROJECT POLISH 🚀
 
 # 🧩 THE ULT
-
-
