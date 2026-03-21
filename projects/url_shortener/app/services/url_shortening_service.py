@@ -20,7 +20,7 @@ class URLShorteningService:
         self.repo = url_repository
         self.cache = get_url_cache()
 
-    async def create_short_url(self, original_url: str) -> URL:
+    async def create_short_url(self, original_url: str, user_id: str | None = None) -> URL:
         """
         Create a shortened URL.
 
@@ -43,7 +43,10 @@ class URLShorteningService:
 
         # Create URL record in database
         created_url = await self.repo.create(
-            self.db, original_url=original_url, short_code=short_code
+            self.db,
+            original_url=original_url,
+            short_code=short_code,
+            user_id=user_id,
         )
 
         # Cache the mapping for faster future lookups

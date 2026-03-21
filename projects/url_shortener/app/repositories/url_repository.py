@@ -16,11 +16,18 @@ class URLRepository:
     """Async repository for URL database operations."""
 
     @staticmethod
-    async def create(db: AsyncSession, *, original_url: str, short_code: str) -> Url:
+    async def create(
+        db: AsyncSession,
+        *,
+        original_url: str,
+        short_code: str,
+        user_id: str | None = None,
+    ) -> Url:
         """Create a new URL record."""
         url = URL(
             original_url=original_url,
             short_code=short_code,
+            user_id=user_id,
             created_at=datetime.now(UTC),
             updated_at=datetime.now(UTC),
         )

@@ -13,6 +13,17 @@ from app.schemas.user import UserCreate
 
 class UserRepository:
     @staticmethod
+    async def get_by_id(db: AsyncSession, user_id: str) -> User | None:
+        result = await db.execute(select(User).where(User.id == user_id))
+        return result.scalar_one_or_none()
+
+    @staticmethod
+    async def get_by_email(db: AsyncSession, email: str) -> User | None:
+        normalized_email = email.strip().lower()
+        result = await db.execute(select(User).where(User.email == normalized_email))
+        return result.scalar_one_or_none()
+
+    @staticmethod
     async def create(db: AsyncSession, user_data: UserCreate) -> User:
         user = User(
             email=user_data.email,
@@ -78,6 +89,22 @@ class UserRepository:
         )
         await db.commit()
         return result.rowcount or 0
+
+    @staticmethod
+    async def get_active_refresh_token(
+        db: AsyncSession, user_id: str, refresh_token: str
+    ) -> RefreshToken | None:
+        token_hash = UserRepository._hash_refresh_token(refresh_token)
+        now = datetime.now(UTC)
+        result = await db.execute(
+            select(RefreshToken).where(
+                RefreshToken.user_id == user_id,
+                RefreshToken.token_hash == token_hash,
+                RefreshToken.revoked.is_(False),
+                RefreshToken.expires_at > now,
+            )
+        )
+        return result.scalar_one_or_none()
 
     @staticmethod
     def _hash_password(password: str) -> str:

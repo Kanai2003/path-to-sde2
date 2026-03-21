@@ -26,6 +26,8 @@ dependencies = [
     "slowapi>=0.1.9",
     # Logging
     "structlog>=24.0.0",
+    # Auth
+    "PyJWT>=2.9.0",
     # Performance
     "orjson>=3.10.0", # Fast JSON serialization
 ]

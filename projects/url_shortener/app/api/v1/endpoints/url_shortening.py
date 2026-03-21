@@ -3,9 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_current_user_optional, get_db
 from app.core.config import settings
 from app.core.exceptions import ShortCodeGenerationError
+from app.models.user import User
 from app.core.rate_limiter import get_rate_limit_string, limiter
 from app.schemas.url import URLCreate, URLResponse
 from app.services.url_shortening_service import get_url_shortening_service
@@ -24,7 +25,10 @@ router = APIRouter()
     get_rate_limit_string(), exempt_when=lambda: not settings.RATE_LIMIT_ENABLED
 )
 async def create_url(
-    request: Request, data: URLCreate, db: AsyncSession = Depends(get_db)
+    request: Request,
+    data: URLCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User | None = Depends(get_current_user_optional),
 ) -> URLResponse:
     """
     Create a shortened URL from the original URL.
@@ -34,7 +38,10 @@ async def create_url(
     service = get_url_shortening_service(db)
 
     try:
-        url = await service.create_short_url(str(data.original_url))
+        url = await service.create_short_url(
+            str(data.original_url),
+            user_id=current_user.id if current_user else None,
+        )
         return URLResponse.model_validate(url)
     except ShortCodeGenerationError as e:
         raise HTTPException(
