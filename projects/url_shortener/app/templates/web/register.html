@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block title %}BitTrail | Register{% endblock %} {%
+block content %}
+<section class="auth-layout">
+  <article class="card auth-card">
+    <p class="eyebrow">GET STARTED</p>
+    <h1>Create your account</h1>
+    <p class="muted">
+      After signup, you'll be redirected to your dashboard automatically.
+    </p>
+
+    <form method="post" action="/app/register" class="stack-gap">
+      <label for="first_name">First name</label>
+      <input
+        id="first_name"
+        name="first_name"
+        type="text"
+        autocomplete="given-name"
+        required
+      />
+
+      <label for="last_name">Last name</label>
+      <input
+        id="last_name"
+        name="last_name"
+        type="text"
+        autocomplete="family-name"
+        required
+      />
+
+      <label for="email">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        required
+      />
+
+      <label for="confirm_password">Confirm password</label>
+      <input
+        id="confirm_password"
+        name="confirm_password"
+        type="password"
+        autocomplete="new-password"
+        required
+      />
+
+      <button type="submit" class="primary-btn">Create account</button>
+    </form>
+
+    {% if error %}
+    <p class="error-msg">{{ error }}</p>
+    {% endif %}
+
+    <p class="muted">
+      Already have an account?
+      <a href="/app/login" class="inline-link">Sign in</a>
+    </p>
+  </article>
+</section>
+{% endblock %}

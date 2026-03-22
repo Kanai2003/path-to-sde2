@@ -61,6 +61,19 @@ class URLRepository:
         return result.scalar_one_or_none() is not None
 
     @staticmethod
+    async def list_recent_by_user(
+        db: AsyncSession, user_id: str, limit: int = 20
+    ) -> list[Url]:
+        """Get a user's latest active shortened URLs."""
+        result = await db.execute(
+            select(URL)
+            .where(URL.user_id == user_id, URL.is_active.is_(True))
+            .order_by(URL.created_at.desc())
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
+    @staticmethod
     async def increment_fetch_count_by(
         db: AsyncSession, short_code: str, count: int
     ) -> None:

@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block title %}BitTrail | Login{% endblock %} {%
+block content %}
+<section class="auth-layout">
+  <article class="card auth-card">
+    <p class="eyebrow">WELCOME BACK</p>
+    <h1>Sign in to your account</h1>
+    <p class="muted">
+      Manage your URLs, review usage, and keep everything in one place.
+    </p>
+
+    <form method="post" action="/app/login" class="stack-gap">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+
+      <button type="submit" class="primary-btn">Login</button>
+    </form>
+
+    {% if error %}
+    <p class="error-msg">{{ error }}</p>
+    {% endif %}
+
+    <p class="muted">
+      No account yet? <a href="/app/register" class="inline-link">Create one</a>
+    </p>
+  </article>
+</section>
+{% endblock %}

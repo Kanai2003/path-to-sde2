@@ -33,7 +33,7 @@ COPY . .
 EXPOSE 8000
 
 # Run with hot-reload enabled
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
 
 # =========================================
 # Production stage - optimized image
@@ -56,4 +56,4 @@ EXPOSE 8000
 # High-performance production config:
 # - 4 workers (adjust based on CPU cores: 2*cores + 1)
 # - 500 concurrent connections per worker via backlog
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--backlog", "2048"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4 --backlog 2048"]

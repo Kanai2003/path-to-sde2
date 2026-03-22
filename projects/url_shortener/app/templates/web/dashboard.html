@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% block title %}BitTrail | Dashboard{% endblock %} {%
+block content %}
+<section class="dashboard-head card">
+  <p class="eyebrow">DASHBOARD</p>
+  <h1>{{ user.first_name }}, your links at a glance.</h1>
+  <p class="muted">
+    Track shortened URLs tied to your account and keep sharing from one place.
+  </p>
+</section>
+
+<section class="card table-card">
+  <div class="table-head">
+    <h2>Recent URLs</h2>
+    <a href="/app" class="inline-link">Create another short URL</a>
+  </div>
+
+  {% if recent_urls %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Short URL</th>
+          <th>Original URL</th>
+          <th>Clicks</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in recent_urls %}
+        <tr>
+          <td>
+            <a
+              href="/{{ item.short_code }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              >/{{ item.short_code }}</a
+            >
+          </td>
+          <td class="truncate">{{ item.original_url }}</td>
+          <td>{{ item.fetch_count }}</td>
+          <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">
+    You do not have any URLs yet.
+    <a href="/app" class="inline-link">Create your first one</a>.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

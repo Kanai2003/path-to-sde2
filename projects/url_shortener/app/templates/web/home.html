@@ -1,0 +1,94 @@
+{% extends "base.html" %} {% block title %}BitTrail | Shorten URL{% endblock %}
+{% block content %}
+<section class="hero-grid">
+  <article class="card hero-card">
+    <p class="eyebrow">URL SHORTENER</p>
+    <h1>Short links with account-aware analytics.</h1>
+    <p class="lead">
+      Use one FastAPI app for API + UI. No separate frontend project needed.
+    </p>
+    {% if user %}
+    <p class="muted">
+      Signed in as
+      <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email
+      }})
+    </p>
+    {% else %}
+    <p class="muted">
+      Sign in to attach links to your account and view your history from one
+      dashboard.
+    </p>
+    {% endif %}
+  </article>
+
+  <article class="card form-card">
+    <h2>Create a short link</h2>
+    <form method="post" action="/app/shorten" class="stack-gap">
+      <label for="original_url">Long URL</label>
+      <input
+        id="original_url"
+        name="original_url"
+        type="url"
+        required
+        placeholder="https://example.com/path/to/resource"
+      />
+      <button type="submit" class="primary-btn">Shorten</button>
+    </form>
+
+    {% if short_url %}
+    <div class="result-box">
+      <span>Created short URL</span>
+      <code id="short-url-output">{{ short_url }}</code>
+      <button type="button" class="copy-btn" onclick="copyShortUrl()">
+        Copy
+      </button>
+    </div>
+    {% endif %} {% if error %}
+    <p class="error-msg">{{ error }}</p>
+    {% endif %}
+  </article>
+</section>
+
+{% if user and recent_urls %}
+<section class="card table-card">
+  <div class="table-head">
+    <h3>Your latest links</h3>
+    <a href="/app/dashboard" class="inline-link">Open dashboard</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Short URL</th>
+          <th>Original URL</th>
+          <th>Clicks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in recent_urls %}
+        <tr>
+          <td>
+            <a
+              href="/{{ item.short_code }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              >/{{ item.short_code }}</a
+            >
+          </td>
+          <td class="truncate">{{ item.original_url }}</td>
+          <td>{{ item.fetch_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+<script>
+  function copyShortUrl() {
+    const value = document.getElementById("short-url-output").textContent;
+    navigator.clipboard.writeText(value);
+  }
+</script>
+{% endblock %}

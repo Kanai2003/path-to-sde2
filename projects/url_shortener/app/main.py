@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.endpoints.url_redirect import router as redirect_router
 from app.api.v1.router import api_router
@@ -14,6 +14,7 @@ from app.core.rate_limiter import setup_rate_limiter
 from app.core.redis_pool import redis_pool_manager
 from app.core.scheduler import analytics_scheduler
 from app.utils.logger import logger
+from app.web.router import router as web_router
 
 
 @asynccontextmanager
@@ -81,17 +82,12 @@ app.add_middleware(
 # Setup rate limiter (conditionally enabled based on settings)
 setup_rate_limiter(app)
 
-# Load HTML template
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+STATIC_DIR = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
-# Serve homepage with URL submission form
-@app.get("/", response_class=HTMLResponse)
-async def read_root():
-    """Serve the URL shortener homepage."""
-    html_content = (TEMPLATES_DIR / "index.html").read_text()
-    return HTMLResponse(content=html_content)
-
+# Server-rendered web routes
+app.include_router(web_router)
 
 # Versioned API routes
 app.include_router(api_router, prefix="/api/v1")

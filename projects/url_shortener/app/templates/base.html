@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}URL Shortener{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/web.css" />
+  </head>
+  <body>
+    <div class="page-bg"></div>
+    <header class="site-header">
+      <a class="brand" href="/app">BitTrail</a>
+      <nav class="site-nav">
+        <a
+          href="/app"
+          class="nav-link {% if active_page == 'home' %}active{% endif %}"
+          >Home</a
+        >
+        {% if user %}
+        <a
+          href="/app/dashboard"
+          class="nav-link {% if active_page == 'dashboard' %}active{% endif %}"
+          >Dashboard</a
+        >
+        <form method="post" action="/app/logout" class="inline-form">
+          <button class="ghost-btn" type="submit">Logout</button>
+        </form>
+        {% else %}
+        <a
+          href="/app/login"
+          class="nav-link {% if active_page == 'login' %}active{% endif %}"
+          >Login</a
+        >
+        <a
+          href="/app/register"
+          class="cta-btn {% if active_page == 'register' %}active{% endif %}"
+          >Sign up</a
+        >
+        {% endif %}
+      </nav>
+    </header>
+
+    <main class="content-wrap">{% block content %}{% endblock %}</main>
+  </body>
+</html>
