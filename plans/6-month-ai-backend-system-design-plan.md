@@ -87,8 +87,8 @@
 
 ### Learn
 
-- JWT
-- OAuth basics
+- [x] JWT
+- [x] OAuth basics
 - [x] Rate limiting
 
 🔗 https://fastapi.tiangolo.com/tutorial/security/
