@@ -20,7 +20,7 @@ See the detailed week-by-week execution plan: [6-Month Plan](6-month-ai-backend-
 
 ## Progress Tracker
 
-- [ ] Month 1: Backend Foundations
+- [x] Month 1: Backend Foundations
 - [ ] Month 2: Production Backend Engineering
 - [ ] Month 3: System Design Fundamentals
 - [ ] Month 4: AI Engineering Foundations
