@@ -104,8 +104,8 @@
 
 ### Learn
 
-- Blob storage
-- Pre-signed URLs
+- [x] Blob storage
+- [x] Pre-signed URLs
 
 🔗 https://aws.amazon.com/what-is/object-storage/
 
