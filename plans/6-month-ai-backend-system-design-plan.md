@@ -111,7 +111,7 @@
 
 ### Build
 
-- File upload service
+- [x] File upload service
 
 ---
 

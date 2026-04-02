@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  file-upload-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8000:8000"
+    environment:
+      # Database: Use Render PostgreSQL
+      DATABASE_URL: ${DATABASE_URL}
+
+      # Storage: Use AWS S3 or Digital Ocean Spaces
+      STORAGE_TYPE: ${STORAGE_TYPE:-s3} # s3 or spaces
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_S3_REGION: ${AWS_S3_REGION:-us-east-1}
+      AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+
+      # Virus Scanning: Optional - VirusTotal API
+      VIRUSOTAL_API_KEY: ${VIRUSOTAL_API_KEY}
+      ENABLE_VIRUS_SCAN: ${ENABLE_VIRUS_SCAN:-false}
+
+      # Security
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: HS256
+      DEBUG: "false"
+
+      # API
+      API_TITLE: File Upload Service
+      API_VERSION: v1
+
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
