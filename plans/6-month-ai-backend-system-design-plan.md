@@ -119,8 +119,8 @@
 
 ### Learn
 
-🔗 https://fullstackopen.com/en/part4/testing_the_backend
-🔗 https://docs.github.com/en/actions
+- [x] 🔗 https://fullstackopen.com/en/part4/testing_the_backend
+- [x] 🔗 https://docs.github.com/en/actions
 
 ### Build
 
