@@ -119,8 +119,8 @@
 
 ### Learn
 
-- [x] 🔗 https://fullstackopen.com/en/part4/testing_the_backend
-- [x] 🔗 https://docs.github.com/en/actions
+🔗 https://fullstackopen.com/en/part4/testing_the_backend
+🔗 https://docs.github.com/en/actions
 
 ### Build
 
@@ -132,7 +132,7 @@
 
 ### Learn
 
-🔗 https://devopswithdocker.com/
+- [x] 🔗 https://devopswithdocker.com/
 
 ### Build
 
