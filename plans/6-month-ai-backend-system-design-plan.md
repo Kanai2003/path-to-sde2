@@ -149,7 +149,7 @@
 
 - CAP theorem
 - Consistent hashing
-- Load balancing
+- [x] Load balancing
 
 🔗 https://github.com/donnemartin/system-design-primer
 
