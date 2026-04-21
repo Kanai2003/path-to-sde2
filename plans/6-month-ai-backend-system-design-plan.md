@@ -119,8 +119,9 @@
 
 ### Learn
 
-🔗 https://fullstackopen.com/en/part4/testing_the_backend
-🔗 https://docs.github.com/en/actions
+- [x] 🔗 https://fullstackopen.com/en/part4/testing_the_backend
+
+- [x] 🔗 https://docs.github.com/en/actions
 
 ### Build
 
@@ -136,7 +137,7 @@
 
 ### Build
 
-- Dockerize all services
+- [x] Dockerize all services
 - Deploy to VPS / cloud
 
 ---
@@ -161,7 +162,7 @@
 
 ### Learn
 
-- Horizontal vs vertical scaling
+- -[x] Horizontal vs vertical scaling
 - Database sharding
 
 🔗 https://www.youtube.com/c/ByteByteGo
