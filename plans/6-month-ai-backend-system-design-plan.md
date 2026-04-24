@@ -138,7 +138,7 @@
 ### Build
 
 - [x] Dockerize all services
-- Deploy to VPS / cloud
+- [x] Deploy to VPS / cloud
 
 ---
 
