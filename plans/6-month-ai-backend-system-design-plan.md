@@ -142,7 +142,7 @@
 
 ---
 
-# 🧠 MONTH 3 — System Design Fundamentals
+# 🧠 MONTH 3 — System Design (overall)
 
 ## Week 9 – Core Concepts
 
