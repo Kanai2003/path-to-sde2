@@ -144,6 +144,8 @@
 
 # 🧠 MONTH 3 — System Design (overall)
 
+Playlist to follow for LLD: [Coder Army System Design full course](https://www.youtube.com/playlist?list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT)
+
 ## Week 9 – Core Concepts
 
 ### Learn
