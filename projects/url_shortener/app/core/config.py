@@ -1,5 +1,28 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Accepted Postgres URL schemes, longest-prefix first so the more specific
+# driver-qualified schemes match before the bare ones.
+_PG_SCHEMES = (
+    "postgresql+asyncpg://",
+    "postgresql+psycopg://",
+    "postgresql+psycopg2://",
+    "postgresql://",
+    "postgres://",  # Railway / Heroku style
+)
+
+
+def _with_driver(url: str, driver_scheme: str) -> str:
+    """Rewrite any supported Postgres URL to use the given driver scheme.
+
+    Railway/Heroku hand out URLs like ``postgresql://...`` (or legacy
+    ``postgres://...``) with no driver. SQLAlchemy then defaults to psycopg2,
+    which is not installed. We normalize to an explicit driver instead.
+    """
+    for scheme in _PG_SCHEMES:
+        if url.startswith(scheme):
+            return driver_scheme + url[len(scheme) :]
+    return url
+
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -43,10 +66,13 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self) -> str:
-        """Convert sync URL to async URL for asyncpg."""
-        return self.DATABASE_URL.replace(
-            "postgresql+psycopg://", "postgresql+asyncpg://"
-        ).replace("postgresql://", "postgresql+asyncpg://")
+        """URL for the async app engine (asyncpg driver)."""
+        return _with_driver(self.DATABASE_URL, "postgresql+asyncpg://")
+
+    @property
+    def sync_database_url(self) -> str:
+        """URL for the sync engine + Alembic migrations (psycopg v3 driver)."""
+        return _with_driver(self.DATABASE_URL, "postgresql+psycopg://")
 
 
 settings = Settings()

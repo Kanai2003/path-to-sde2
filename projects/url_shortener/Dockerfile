@@ -32,8 +32,8 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Run with hot-reload enabled
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+# Run with hot-reload enabled ($PORT honored if provided, else 8000)
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --reload"]
 
 # =========================================
 # Production stage - optimized image
@@ -53,7 +53,6 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# High-performance production config:
-# - 4 workers (adjust based on CPU cores: 2*cores + 1)
-# - 500 concurrent connections per worker via backlog
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4 --backlog 2048"]
+# Migrate + launch via start.sh. Binds $PORT (Railway-injected, default 8000)
+# and reads $WEB_CONCURRENCY for worker count (default 2; raise on bigger CPUs).
+CMD ["./start.sh"]

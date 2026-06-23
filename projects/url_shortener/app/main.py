@@ -86,6 +86,16 @@ STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+@app.get("/health", tags=["Health"], include_in_schema=False)
+async def health() -> dict[str, str]:
+    """Lightweight liveness probe for Railway / load balancers.
+
+    Intentionally has no DB/Redis dependency so it stays green while those
+    are reconnecting, and is registered before the catch-all redirect route.
+    """
+    return {"status": "ok"}
+
+
 # Server-rendered web routes
 app.include_router(web_router)
 

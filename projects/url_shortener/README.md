@@ -369,6 +369,38 @@ docker compose up --build
 
 Includes PostgreSQL, Redis, app, and analytics worker.
 
+### Railway (one-service deploy)
+
+This repo is a monorepo; the app lives in `projects/url_shortener`.
+
+1. **New Project → Deploy from GitHub repo**, pick this repo.
+2. On the service: **Settings → Root Directory = `projects/url_shortener`**.
+   Railway then reads `railway.toml` + `Dockerfile` (final `production` stage).
+3. Add a **PostgreSQL** plugin and a **Redis** plugin to the project.
+4. On the app service → **Variables**, set:
+   - `DATABASE_URL` = `${{ Postgres.DATABASE_URL }}` (reference — prefer the
+     internal url; the public proxy url has `?sslmode=require`, which asyncpg
+     rejects)
+   - `REDIS_URL` = `${{ Redis.REDIS_URL }}`
+   - `JWT_SECRET_KEY` = a strong random string
+   - `BASE_URL` = your public Railway domain
+   - `RATE_LIMIT_ENABLED` / `RATE_LIMIT_REQUESTS` / `RATE_LIMIT_WINDOW` as needed
+5. Deploy. `start.sh` runs `alembic upgrade head`, then uvicorn on `$PORT`.
+   Healthcheck path is `/health`.
+
+> The driver suffix in `DATABASE_URL` is optional now — the app normalizes
+> `postgresql://` / `postgres://` to asyncpg (runtime) and psycopg (migrations).
+
+**Auto-deploy on push:** either enable Railway's native GitHub integration
+(auto-deploys on push to the connected branch — no extra config), or use the
+included GitHub Actions workflow at
+`.github/workflows/deploy-url-shortener.yml` (add repo secret `RAILWAY_TOKEN`,
+a Railway project token).
+
+The analytics worker is a separate process — add a **second Railway service**
+from the same repo/root with start command
+`python -m app.workers.analytics_worker` if you want async analytics in prod.
+
 ### Production Deployment
 
 **Prerequisites:**

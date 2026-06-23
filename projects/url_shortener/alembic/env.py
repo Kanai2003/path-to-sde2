@@ -13,8 +13,11 @@ from app.models import refresh_token, url, user
 # access to the values within the .ini file in use.
 config = context.config
 
-# Set the database URL from app settings
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Set the database URL from app settings.
+# Use the sync URL (psycopg v3) — Alembic runs migrations synchronously, and a
+# bare ``postgresql://`` would make SQLAlchemy fall back to the uninstalled
+# psycopg2 driver.
+config.set_main_option("sqlalchemy.url", settings.sync_database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

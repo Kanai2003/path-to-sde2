@@ -1,0 +1,31 @@
+name: Deploy url-shortener to Railway
+
+# Auto-deploys on every push to main that touches the project.
+# Requires a repo secret RAILWAY_TOKEN (Railway project token:
+#   Railway → project → Settings → Tokens → create, then add to
+#   GitHub → repo → Settings → Secrets and variables → Actions).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/url_shortener/**"
+      - ".github/workflows/deploy-url-shortener.yml"
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/url_shortener
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        # --service must match the service name in Railway (here: url-shortener).
+        run: railway up --service url-shortener --ci
