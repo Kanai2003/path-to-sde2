@@ -24,262 +24,409 @@ graph TD
 *   **Key Characteristic:** Follows OCP. You add new product types by creating new subclass factories instead of modifying existing code. Uses **Inheritance**.
 
 ### 3. Abstract Factory (Gang of Four Pattern)
-*   **Concept:** Provides an interface for creating families of related or dependent objects (e.g., Mac Button & Mac Checkbox) without specifying their concrete classes. It acts as a "Factory of Factories".
+*   **Concept:** Provides an interface for creating families of related or dependent objects (e.g., matching buns and breads) without specifying their concrete classes. It acts as a "Factory of Factories".
 *   **Key Characteristic:** Solves the problem of product family dependency consistency. Uses **Composition**.
 
 ---
 
-## 🐍 Python Implementations
+## ⚡ 1. Simple Factory
 
-### ⚡ 1. Simple Factory Example
+A single class handles the instantiation logic of products.
 
+```mermaid
+classDiagram
+    class Burger {
+        <<abstract>>
+        +prepare() void*
+    }
+    class BasicBurger {
+        +prepare() void
+    }
+    class StandardBurger {
+        +prepare() void
+    }
+    class PremiumBurger {
+        +prepare() void
+    }
+    class SimpleBurgerFactory {
+        +create_burger(type: string) Burger
+    }
+
+    Burger <|-- BasicBurger
+    Burger <|-- StandardBurger
+    Burger <|-- PremiumBurger
+    SimpleBurgerFactory ..> Burger : instantiates
+```
+
+### 🐍 Python Implementation:
 ```python
 from abc import ABC, abstractmethod
 
 # Product Interface
-class Notification(ABC):
+class Burger(ABC):
     @abstractmethod
-    def send(self, message: str) -> None:
+    def prepare(self) -> None:
         pass
 
 # Concrete Products
-class SMSNotification(Notification):
-    def send(self, message: str) -> None:
-        print(f"SMS: {message}")
+class BasicBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Basic Burger (Normal Bread)...")
 
-class EmailNotification(Notification):
-    def send(self, message: str) -> None:
-        print(f"Email: {message}")
+class StandardBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Standard Burger (Normal Bread)...")
+
+class PremiumBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Premium Burger (Normal Bread)...")
 
 # Simple Factory Class
-class NotificationFactory:
+class SimpleBurgerFactory:
     @staticmethod
-    def create_notification(channel: str) -> Notification:
-        # Violates OCP: Adding a new channel requires modifying this logic
-        if channel.lower() == "sms":
-            return SMSNotification()
-        elif channel.lower() == "email":
-            return EmailNotification()
+    def create_burger(burger_type: str) -> Burger:
+        # Violates OCP: Adding a new burger type requires modifying this logic
+        if burger_type.lower() == "basic":
+            return BasicBurger()
+        elif burger_type.lower() == "standard":
+            return StandardBurger()
+        elif burger_type.lower() == "premium":
+            return PremiumBurger()
         else:
-            raise ValueError(f"Unknown channel type: {channel}")
+            raise ValueError(f"Unknown burger type: {burger_type}")
 
 # Client Usage
 if __name__ == "__main__":
-    notifier = NotificationFactory.create_notification("sms")
-    notifier.send("Hello World!")  # Output: SMS: Hello World!
+    factory = SimpleBurgerFactory()
+    burger = factory.create_burger("basic")
+    burger.prepare()  # Output: Preparing Basic Burger (Normal Bread)...
 ```
 
 ---
 
-### ⚡ 2. Factory Method Example (GoF)
+## ⚡ 2. Factory Method (GoF)
 
-#### UML Class Diagram
+Defines an interface for creating a product, but defers subclass decisions to concrete factories.
+
+### 📊 Standard UML (Generic)
 ```mermaid
 classDiagram
-    class Logistics {
+    class Product {
         <<abstract>>
-        +create_vehicle()* LogisticsVehicle
-        +plan_delivery() str
     }
-    class RoadLogistics {
-        +create_vehicle() LogisticsVehicle
+    class ConcreteProductA {
     }
-    class SeaLogistics {
-        +create_vehicle() LogisticsVehicle
+    class ConcreteProductB {
     }
-    class LogisticsVehicle {
-        <<interface>>
-        +deliver()* str
+    class Factory {
+        <<abstract>>
+        +factoryMethod() Product*
+        +anOperation()
     }
-    class Truck {
-        +deliver() str
-    }
-    class Ship {
-        +deliver() str
+    class ConcreteFactory {
+        +factoryMethod() Product
     }
 
-    Logistics <|-- RoadLogistics
-    Logistics <|-- SeaLogistics
-    LogisticsVehicle <|.. Truck
-    LogisticsVehicle <|.. Ship
-    RoadLogistics ..> Truck : instantiates
-    SeaLogistics ..> Ship : instantiates
-    Logistics ..> LogisticsVehicle : uses
+    Product <|-- ConcreteProductA
+    Product <|-- ConcreteProductB
+    Factory <|-- ConcreteFactory
+    ConcreteFactory ..> ConcreteProductA : instantiates
+    ConcreteFactory ..> ConcreteProductB : instantiates
 ```
 
+### 🍔 Burger Factory Method UML (Specific)
+```mermaid
+classDiagram
+    class Burger {
+        <<abstract>>
+        +prepare() void*
+    }
+    class BasicBurger {
+        +prepare() void
+    }
+    class StandardBurger {
+        +prepare() void
+    }
+    class PremiumBurger {
+        +prepare() void
+    }
+    class BasicWheatBurger {
+        +prepare() void
+    }
+    class StandardWheatBurger {
+        +prepare() void
+    }
+    class PremiumWheatBurger {
+        +prepare() void
+    }
+    class BurgerFactory {
+        <<abstract>>
+        +createBurger(type: string) Burger*
+    }
+    class SinghBurger {
+        +createBurger(type: string) Burger
+    }
+    class KingBurger {
+        +createBurger(type: string) Burger
+    }
+
+    Burger <|-- BasicBurger
+    Burger <|-- StandardBurger
+    Burger <|-- PremiumBurger
+    Burger <|-- BasicWheatBurger
+    Burger <|-- StandardWheatBurger
+    Burger <|-- PremiumWheatBurger
+
+    BurgerFactory <|-- SinghBurger
+    BurgerFactory <|-- KingBurger
+
+    SinghBurger ..> BasicBurger : instantiates
+    SinghBurger ..> StandardBurger : instantiates
+    SinghBurger ..> PremiumBurger : instantiates
+
+    KingBurger ..> BasicWheatBurger : instantiates
+    KingBurger ..> StandardWheatBurger : instantiates
+    KingBurger ..> PremiumWheatBurger : instantiates
+```
+
+#### Conceptual ER-Style Relationship Diagram
+```mermaid
+erDiagram
+    BurgerFactory ||--o{ Burger : creates
+    SinghBurger ||--|| BasicBurger : instantiates
+    SinghBurger ||--|| StandardBurger : instantiates
+    SinghBurger ||--|| PremiumBurger : instantiates
+    KingBurger ||--|| BasicWheatBurger : instantiates
+    KingBurger ||--|| StandardWheatBurger : instantiates
+    KingBurger ||--|| PremiumWheatBurger : instantiates
+```
+
+### 🐍 Python Implementation:
 ```python
 from abc import ABC, abstractmethod
 
 # 1. Product Interface
-class LogisticsVehicle(ABC):
+class Burger(ABC):
     @abstractmethod
-    def deliver(self) -> str:
+    def prepare(self) -> None:
         pass
 
-# 2. Concrete Products
-class Truck(LogisticsVehicle):
-    def deliver(self) -> str:
-        return "Delivering cargo by land in box truck."
+# 2. Concrete Products (Normal Bread Family)
+class BasicBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Basic Burger (Normal Bread)")
 
-class Ship(LogisticsVehicle):
-    def deliver(self) -> str:
-        return "Delivering cargo by sea via container ship."
+class StandardBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Standard Burger (Normal Bread)")
+
+class PremiumBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Premium Burger (Normal Bread)")
+
+# Concrete Products (Wheat Bread Family)
+class BasicWheatBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Basic Wheat Burger")
+
+class StandardWheatBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Standard Wheat Burger")
+
+class PremiumWheatBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Premium Wheat Burger")
 
 # 3. Creator Interface (Declares the Factory Method)
-class Logistics(ABC):
+class BurgerFactory(ABC):
     @abstractmethod
-    def create_vehicle(self) -> LogisticsVehicle:
+    def createBurger(self, burger_type: str) -> Burger:
         """The Factory Method: Subclasses must override this"""
         pass
 
-    def plan_delivery(self) -> str:
-        # Core business logic uses the factory method to create the product
-        vehicle = self.create_vehicle()
-        return f"Logistics Plan: {vehicle.deliver()}"
+    def orderBurger(self, burger_type: str) -> Burger:
+        # Factory method handles creation, leaving execution decoupled
+        burger = self.createBurger(burger_type)
+        burger.prepare()
+        return burger
 
-# 4. Concrete Creators (Override the Factory Method)
-class RoadLogistics(Logistics):
-    def create_vehicle(self) -> LogisticsVehicle:
-        return Truck()
+# 4. Concrete Creators (Override the Factory Method to defer implementation)
+class SinghBurger(BurgerFactory):
+    def createBurger(self, burger_type: str) -> Burger:
+        if burger_type == "basic":
+            return BasicBurger()
+        elif burger_type == "standard":
+            return StandardBurger()
+        elif burger_type == "premium":
+            return PremiumBurger()
+        else:
+            raise ValueError(f"Unknown burger type: {burger_type}")
 
-class SeaLogistics(Logistics):
-    def create_vehicle(self) -> LogisticsVehicle:
-        return Ship()
+class KingBurger(BurgerFactory):
+    def createBurger(self, burger_type: str) -> Burger:
+        if burger_type == "basic":
+            return BasicWheatBurger()
+        elif burger_type == "standard":
+            return StandardWheatBurger()
+        elif burger_type == "premium":
+            return PremiumWheatBurger()
+        else:
+            raise ValueError(f"Unknown burger type: {burger_type}")
 
 # Client Usage
-def client_code(logistics_service: Logistics):
-    print(logistics_service.plan_delivery())
-
 if __name__ == "__main__":
-    print("Testing Road Logistics:")
-    client_code(RoadLogistics())  # Output: Logistics Plan: Delivering cargo by land in box truck.
+    print("Ordering from Singh Burger (Normal Bread):")
+    singh = SinghBurger()
+    singh.orderBurger("basic")     # Output: Preparing Basic Burger (Normal Bread)
+    singh.orderBurger("premium")   # Output: Preparing Premium Burger (Normal Bread)
 
-    print("\nTesting Sea Logistics:")
-    client_code(SeaLogistics())   # Output: Logistics Plan: Delivering cargo by sea via container ship.
+    print("\nOrdering from King Burger (Wheat Bread):")
+    king = KingBurger()
+    king.orderBurger("standard")   # Output: Preparing Standard Wheat Burger
 ```
 
 ---
 
-### ⚡ 3. Abstract Factory Example (GoF)
+## ⚡ 3. Abstract Factory (GoF)
 
-#### UML Class Diagram
+Provides an interface for creating families of related products (e.g., Breads/Buns & Garlic Breads) without specifying concrete classes.
+
+### 🍔 Meal Abstract Factory UML
 ```mermaid
 classDiagram
-    class GUIFactory {
-        <<interface>>
-        +create_button()* Button
-        +create_checkbox()* Checkbox
+    class Burger {
+        <<abstract>>
+        +prepare() void*
     }
-    class WindowsFactory {
-        +create_button() Button
-        +create_checkbox() Checkbox
+    class BasicBurger {
+        +prepare() void
     }
-    class MacOSFactory {
-        +create_button() Button
-        +create_checkbox() Checkbox
+    class BasicWheatBurger {
+        +prepare() void
     }
-    class Button {
-        <<interface>>
-        +click()* str
+    class GarlicBread {
+        <<abstract>>
+        +prepare() void*
     }
-    class WindowsButton {
-        +click() str
+    class BasicGarlicBread {
+        +prepare() void
     }
-    class MacOSButton {
-        +click() str
+    class BasicWheatGarlicBread {
+        +prepare() void
     }
-    class Checkbox {
-        <<interface>>
-        +toggle()* str
+    class Factory {
+        <<abstract>>
+        +createBurger() Burger*
+        +createGarlicBread() GarlicBread*
     }
-    class WindowsCheckbox {
-        +toggle() str
+    class Singh {
+        +createBurger() Burger
+        +createGarlicBread() GarlicBread
     }
-    class MacOSCheckbox {
-        +toggle() str
+    class King {
+        +createBurger() Burger
+        +createGarlicBread() GarlicBread
     }
 
-    GUIFactory <|.. WindowsFactory
-    GUIFactory <|.. MacOSFactory
-    Button <|.. WindowsButton
-    Button <|.. MacOSButton
-    Checkbox <|.. WindowsCheckbox
-    Checkbox <|.. MacOSCheckbox
+    Burger <|-- BasicBurger
+    Burger <|-- BasicWheatBurger
+    GarlicBread <|-- BasicGarlicBread
+    GarlicBread <|-- BasicWheatGarlicBread
 
-    WindowsFactory ..> WindowsButton : instantiates
-    WindowsFactory ..> WindowsCheckbox : instantiates
-    MacOSFactory ..> MacOSButton : instantiates
-    MacOSFactory ..> MacOSCheckbox : instantiates
+    Factory <|-- Singh
+    Factory <|-- King
+
+    Singh ..> BasicBurger : instantiates
+    Singh ..> BasicGarlicBread : instantiates
+
+    King ..> BasicWheatBurger : instantiates
+    King ..> BasicWheatGarlicBread : instantiates
 ```
 
+#### Conceptual ER-Style Relationship Diagram
+```mermaid
+erDiagram
+    Factory ||--o{ Burger : creates
+    Factory ||--o{ GarlicBread : creates
+    Singh ||--|| BasicBurger : instantiates
+    Singh ||--|| BasicGarlicBread : instantiates
+    King ||--|| BasicWheatBurger : instantiates
+    King ||--|| BasicWheatGarlicBread : instantiates
+```
+
+### 🐍 Python Implementation:
 ```python
 from abc import ABC, abstractmethod
 
-# --- Abstract Products (Family of products) ---
-class Button(ABC):
+# --- Abstract Products (Families) ---
+class Burger(ABC):
     @abstractmethod
-    def click(self) -> str:
+    def prepare(self) -> None:
         pass
 
-class Checkbox(ABC):
+class GarlicBread(ABC):
     @abstractmethod
-    def toggle(self) -> str:
+    def prepare(self) -> None:
         pass
 
-# --- Concrete Products for Windows ---
-class WindowsButton(Button):
-    def click(self) -> str:
-        return "Windows Button Clicked"
+# --- Concrete Products for Normal Bread (Family A) ---
+class BasicBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Basic Burger (Normal Bread)")
 
-class WindowsCheckbox(Checkbox):
-    def toggle(self) -> str:
-        return "Windows Checkbox Toggled"
+class BasicGarlicBread(GarlicBread):
+    def prepare(self) -> None:
+        print("Preparing Basic Garlic Bread (Normal Bread)")
 
-# --- Concrete Products for macOS ---
-class MacOSButton(Button):
-    def click(self) -> str:
-        return "macOS Button Clicked"
+# --- Concrete Products for Wheat Bread (Family B) ---
+class BasicWheatBurger(Burger):
+    def prepare(self) -> None:
+        print("Preparing Basic Wheat Burger")
 
-class MacOSCheckbox(Checkbox):
-    def toggle(self) -> str:
-        return "macOS Checkbox Toggled"
+class BasicWheatGarlicBread(GarlicBread):
+    def prepare(self) -> None:
+        print("Preparing Basic Wheat Garlic Bread")
 
 # --- Abstract Factory Interface ---
-class GUIFactory(ABC):
+class Factory(ABC):
     @abstractmethod
-    def create_button(self) -> Button:
+    def createBurger(self) -> Burger:
         pass
 
     @abstractmethod
-    def create_checkbox(self) -> Checkbox:
+    def createGarlicBread(self) -> GarlicBread:
         pass
 
 # --- Concrete Factories ---
-class WindowsFactory(GUIFactory):
-    def create_button(self) -> Button:
-        return WindowsButton()
-    def create_checkbox(self) -> Checkbox:
-        return WindowsCheckbox()
+class Singh(Factory):
+    # Produces Normal Bread Family products
+    def createBurger(self) -> Burger:
+        return BasicBurger()
 
-class MacOSFactory(GUIFactory):
-    def create_button(self) -> Button:
-        return MacOSButton()
-    def create_checkbox(self) -> Checkbox:
-        return MacOSCheckbox()
+    def createGarlicBread(self) -> GarlicBread:
+        return BasicGarlicBread()
 
-# Client Usage (Decoupled from OS specific widgets)
-def run_ui(factory: GUIFactory):
-    btn = factory.create_button()
-    chk = factory.create_checkbox()
-    print(btn.click())
-    print(chk.toggle())
+class King(Factory):
+    # Produces Wheat Bread Family products
+    def createBurger(self) -> Burger:
+        return BasicWheatBurger()
+
+    def createGarlicBread(self) -> GarlicBread:
+        return BasicWheatGarlicBread()
+
+# Client Usage
+def run_bakery(factory: Factory):
+    burger = factory.createBurger()
+    bread = factory.createGarlicBread()
+    burger.prepare()
+    bread.prepare()
 
 if __name__ == "__main__":
-    print("Running in Windows environment:")
-    run_ui(WindowsFactory())
+    print("Bakery Run: Singh (Normal Bread Products):")
+    run_bakery(Singh())
     
-    print("\nRunning in macOS environment:")
-    run_ui(MacOSFactory())
+    print("\nBakery Run: King (Wheat Bread Products):")
+    run_bakery(King())
 ```
 
 ---
@@ -308,7 +455,7 @@ if __name__ == "__main__":
 > **Q: How does Factory Method comply with SOLID principles?**
 > *   **Single Responsibility Principle (SRP):** You move the product creation code out of the business logic to a single place.
 > *   **Open/Closed Principle (OCP):** You can introduce new product variations and their creators without breaking the existing client code.
-> *   **Dependency Inversion Principle (DIP):** The client code relies on abstract product interfaces (`LogisticsVehicle`), not on concrete implementations (`Truck` or `Ship`).
+> *   **Dependency Inversion Principle (DIP):** The client code relies on abstract product interfaces (`Burger`), not on concrete implementations (`BasicBurger` or `BasicWheatBurger`).
 
 > [!WARNING]
 > **Q: When should you NOT use a Factory?**
